@@ -1,0 +1,184 @@
+
+---
+title: <center>BAN420 Term Paper</center>
+subtitle: 
+output: html_document
+---
+
+```{r, include=FALSE}
+sys.source("analysis.r", envir = knitr::knit_global())
+```
+<br><br>
+<h2><center> Notes on data sets </center></h2>
+
+<p> 
+The data sets used in this analysis are gathered from a statistics bureaus of five european countries. The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19. The sources of the data sets are as follows:
+</p>
+
+<p>
+
+UK: <a href = "https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths"> 
+        Office for national statistics
+</a>
+
+</P>
+
+<p>
+
+France: <a href = "https://www.insee.fr/en/statistiques/4493808?sommaire=4493845"> 
+        INSEE (Institut national de la statistique et des études économiques)
+</a>
+</P>
+
+
+<p>
+
+Denmark: <a href = "https://www.statbank.dk/dodc2"> 
+        Statistics Denmark
+</a>
+
+</P>
+
+<p>
+
+Sweden: <a href = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/"> 
+        Statistics Sweden
+</a>
+
+</P>
+
+<p>
+
+Norway: <a href = "https://www.ssb.no/statbank/table/07995/"> 
+        Statistics Norway
+</a>
+
+</P>
+
+<p> 
+
+Below the reader can find a selection of plots and tables.
+The code producing the tables and plots can be found found in analysis.r, and data_retrieval.r
+
+
+
+Note on agegroups:
+The datasets have in common that they all are categorized by gender and agegroup. The genders are a non-issue, 
+the agegroups however presents several issues. We want to standardize age to make meaningful plots and tables, however by
+standardizing we also lose data. We opted to use a common denominator strategy by using the swedish dataset's agegroup as a standard. It has the smallest number of groups, and thus serves best as a standard. 
+
+
+    
+
+</p>
+
+
+<br><br><br><br><br><br>
+<h2><center> Tabled statistics </center> </h2>
+
+<h2><center><span style ="color : rgb(0,0,128);"> Statistics from week 12 in year 2020 </span></center></h2>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+
+shortTable()
+
+```
+
+
+<br><br><br><br><br><br>
+<h2><center><span style ="color : rgb(0,0,128);"> Expected vs. Actual Deaths in Norway vs. UK at age 80-84 </span></center></h2>
+  
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width= 11}
+plotfunction_diff(totaldata, 
+                  agegrouping = "80-84",
+                  countryparam = "Norway")
+
+plotfunction_diff(totaldata, 
+                  agegrouping= "80-84",
+                  countryparam = "UK")
+
+```
+
+
+<h2><center><span style ="color : rgb(0,0,128);"> Expected vs. Actual Deaths in different countries </span></center></h2>
+```{r echo=FALSE, message=FALSE, warning=FALSE, fig.width= 11}
+
+plotfunction(totaldata,
+             countryparam = "Norway",
+             filename = "Norway.pdf",
+             ymin = NA,
+             ymax = NA)
+
+plotfunction(totaldata,
+             countryparam = "Sweden",
+             filename = "Sweden.pdf",
+             ymin = NA,
+             ymax = NA)
+
+plotfunction(totaldata,
+             countryparam = "Denmark",
+             filename = "Denmark.pdf",
+             ymin = NA,
+             ymax = NA)
+
+plotfunction(totaldata,
+             countryparam = "France",
+             filename = "France.pdf",
+             ymin = NA,
+             ymax = NA)
+
+plotfunction(totaldata,
+             countryparam = "UK",
+             filename = "UK.pdf",
+             ymin = NA,
+             ymax = NA)
+```
+
+
+<h2><center><span style ="color : rgb(0,0,128);"> Comparing countries with standardized y-axis [0, 5994] </span></center></h2>
+```{r, echo = FALSE, message = FALSE, warning = FALSE, fig.width = 11}
+
+plotfunction(totaldata,
+             countryparam = "Norway",
+             filename = "NorwayScaled.pdf",
+             ymin = 0,
+             ymax = 5994)
+
+plotfunction(totaldata,
+             countryparam = "Sweden",
+             filename = "SwedenScaled.pdf",
+             ymin = 0,
+             ymax = 5994)
+
+plotfunction(totaldata,
+             countryparam = "Denmark",
+             filename = "DenmarkScaled.pdf",
+             ymin = 0,
+             ymax = 5994)
+
+plotfunction(totaldata,
+             countryparam = "France",
+             filename = "FranceScaled.pdf",
+             ymin = 0,
+             ymax = 5994)
+
+plotfunction(totaldata,
+             countryparam = "UK",
+             filename = "UKScaled.pdf",
+             ymin = 0,
+             ymax = 5994)
+
+
+```
+
+<h2> Table containing all data </h2>
+
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
+
+
+longTable()
+
+```
+
+
