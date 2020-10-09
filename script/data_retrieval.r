@@ -42,7 +42,7 @@ changeNonRecurringRow <- function(df,
 "Function to determine gender, by taking a gender of datatype character. 
 Use if control flow statements and return a standardized gender string if the
 specific evaluation criteria is fullfilled. Else, return NA."
-genderFunc <- function(gender =? character) {
+genderFuncOld <- function(gender =? character) {
   if (gender == "1") return ("M")
   else if (gender == "M") return ("M")
   else if (gender == "Menn") return ("M")
@@ -54,8 +54,25 @@ genderFunc <- function(gender =? character) {
   else return (NA)
 }
 
-genderFunc_vector <- Vectorize(genderFunc)    # Vectorizing the given function
+genderFunc_vectorOld <- Vectorize(genderFunc)    # Vectorizing the given function
 
+
+
+getFormat <- function(country) {
+  country <- tolower(country)
+  path <- paste("../datasett/", country, "/", country, "_format.xlsx")
+  path <- path %>% gsub(" ", "",.)
+  print(path)
+  return (path)
+}
+
+getStandard <- function() {return("../datasett/Datastandard/data_standard.xlsx") }
+
+genderFunc <- function(country) {
+  countryFormat <- read_excel(getFormat(country)) %>% select(Gender)
+  standard <- read_excel(getStandard()) %>% select(Gender)
+  print(standard)
+}
 
 
 "Function that returns agegroups for a given age.
@@ -199,8 +216,10 @@ custom_clean_data_2020 <- function(df,
 
 #### Data Norway ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns"
-data_norway <- read_excel("../datasett/norway_ssb.xlsx", 
+data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx", 
                           range = "Dode1!a4:X1594")
+
+format_norway <- read_excel("../datasett/Norway/norway_format.xlsx")
 
 
 
