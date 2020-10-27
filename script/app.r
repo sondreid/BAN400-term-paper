@@ -1,10 +1,13 @@
 library(shiny)
+#source("analysis.r")
 
 ui <- fluidPage(
   sliderInput(inputId = "num",
               label = "Choose a number",
               value = 25, min = 1, max = 100),
-  plotOutput("hist")
+  plotOutput("hist"),
+  dataTableOutput("table")
+  plotOutput("tableplot")
 )
 
 server <- function(input, output){
@@ -12,6 +15,10 @@ server <- function(input, output){
     hist(rnorm(input$num), 
          main = "100 random normal values")
     })
+  output$table <- renderDataTable({
+      longTable()
+  })
+  output$tableplot <<- renderPlot
 }
 
 shinyApp(ui = ui, server = server)
