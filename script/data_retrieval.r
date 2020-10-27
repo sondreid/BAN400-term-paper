@@ -13,8 +13,7 @@ library(lubridate)
 library(janitor)  
 
 
-# Runs standarisation 
-source(standardisation.r)
+
 
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
@@ -41,22 +40,6 @@ changeNonRecurringRow <- function(df,
 
 
 
-"Function to determine gender, by taking a gender of datatype character. 
-Use if control flow statements and return a standardized gender string if the
-specific evaluation criteria is fullfilled. Else, return NA."
-genderFunc <- function(gender =? character) {
-  if (gender == "1") return ("M")
-  else if (gender == "M") return ("M")
-  else if (gender == "Menn") return ("M")
-  else if (gender == "Kvinner") return ("F")
-  else if (gender == "K") return ("F")
-  else if (gender == "W") return ("F")
-  else if (gender == "2") return ("F")
-  else if (gender == "F") return ("F")
-  else return (NA)
-}
-
-genderFunc_vector <- Vectorize(genderFunc)    # Vectorizing the given function
 
 
 
@@ -204,7 +187,6 @@ custom_clean_data_2020 <- function(df,
 data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx", 
                           range = "Dode1!a4:X1594")
 
-format_norway <- read_excel("../datasett/Norway/norway_format.xlsx")
 
 
 
@@ -228,7 +210,6 @@ data_norway  %<>%
   mutate(week =   sapply(strsplit(values, " "), `[`, 2),     # **
          agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
          agegroup = sapply(strsplit(agegroup ," "), `[`, 1),
-         gender = genderFunc_vector(gender),            # Check function section
          agegroup = ageGroup_vector(agegroup)) %>%      # Check function section
   filter(!is.na(gender), 
          year >= 2014, 
@@ -239,14 +220,7 @@ data_norway  %<>%
            week) %>%                  # In order to sum deaths into groups
   summarise(deaths = sum(deaths)) %>%
   ungroup() %>%                       # Ungrouped such that mutation is allowed  
-  mutate(country = "Norway") %>% 
-  transform(gender = as.factor(gender),  
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.numeric(year),
-            deaths = as.numeric(deaths),
-            country = as.factor(country)) # Standardized data type for each col.
-
+  mutate(country = "Norway") 
 
 
 "Saving the data frame to a .Rda-file for the purpose of analysis.r.
