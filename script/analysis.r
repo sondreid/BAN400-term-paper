@@ -126,7 +126,8 @@ addExpectedDeaths <- function(df) {
   return (new_df)
 }
 
-
+#Tests
+testDF <- addExpectedDeaths(data_norway)
 
 "Rowbind all datasets to a combined dataset, calling addExpectedDeaths()"
 assembleAllData <- function(dfVector = c("data_norway", 
