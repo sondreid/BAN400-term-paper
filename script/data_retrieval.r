@@ -434,8 +434,6 @@ data_uk <- do.call("rbind", list(data_uk_2014,
   mutate(country = "UK")
 
 
-
-
 ##### Data France -----------------------------------------------------------
 "Gather csv filename from the France-folder in to a list"
 datafiles_france <- list.files(path = "../datasett/France/", 

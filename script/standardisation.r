@@ -10,8 +10,19 @@ library(janitor)
 library(docstring)
 
 
+"In case of sourcing the retrieval file directly to this file"
+#source("data_retrieval.r")
+
 " Retrieve data standard excel sheet "
 getStandard <- function() {return("../datasett/Datastandard/data_standard.xlsx") }
+
+
+getFormat <- function(country) {
+  country <- tolower(country)
+  path <- paste("../datasett/", country, "/", country, "_format.xlsx")
+  path <- path %>% gsub(" ", "",.)
+  return (path)
+}
 
 
 
@@ -64,18 +75,15 @@ norway_standard <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kj
 save(norway_standard, file = "../results/data_norway.Rda")  # Save to .rda file
 
 
-
 # Sweden
 sweden_standard <- standardiseGender(data_sweden, c("M", "K"))
 save(sweden_standard, file = "../results/data_sweden.Rda")
 rm(data_sweden_2015_2019) 
 rm(data_sweden_2020) 
 
-
 # Denmark
 denmark_standard <- standardiseGender(data_denmark, c("M", "W"))
 save(denmark_standard, file = "../results/data_denmark.Rda")
-
 
 #UK
 uk_standard <- standardiseGender(data_denmark, c("M", "W"))
