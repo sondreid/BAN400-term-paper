@@ -14,6 +14,7 @@ library(janitor)
 
 
 
+
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
 stored element for each new group. The function has following parameters:
@@ -37,24 +38,6 @@ changeNonRecurringRow <- function(df,
   return (df)
 }
 
-
-
-"Function to determine gender, by taking a gender of datatype character. 
-Use if control flow statements and return a standardized gender string if the
-specific evaluation criteria is fullfilled. Else, return NA."
-genderFunc <- function(gender =? character) {
-  if (gender == "1") return ("M")
-  else if (gender == "M") return ("M")
-  else if (gender == "Menn") return ("M")
-  else if (gender == "Kvinner") return ("F")
-  else if (gender == "K") return ("F")
-  else if (gender == "W") return ("F")
-  else if (gender == "2") return ("F")
-  else if (gender == "F") return ("F")
-  else return (NA)
-}
-
-genderFunc_vector <- Vectorize(genderFunc)    # Vectorizing the given function
 
 
 
@@ -199,8 +182,9 @@ custom_clean_data_2020 <- function(df,
 
 #### Data Norway ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns"
-data_norway <- read_excel("../datasett/norway_ssb.xlsx", 
+data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx", 
                           range = "Dode1!a4:X1594")
+
 
 
 
@@ -224,7 +208,6 @@ data_norway  %<>%
   mutate(week =   sapply(strsplit(values, " "), `[`, 2),     # **
          agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
          agegroup = sapply(strsplit(agegroup ," "), `[`, 1),
-         gender = genderFunc_vector(gender),            # Check function section
          agegroup = ageGroup_vector(agegroup)) %>%      # Check function section
   filter(!is.na(gender), 
          year >= 2014, 
@@ -235,21 +218,7 @@ data_norway  %<>%
            week) %>%                  # In order to sum deaths into groups
   summarise(deaths = sum(deaths)) %>%
   ungroup() %>%                       # Ungrouped such that mutation is allowed  
-  mutate(country = "Norway") %>% 
-  transform(gender = as.factor(gender),  
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.numeric(year),
-            deaths = as.numeric(deaths),
-            country = as.factor(country)) # Standardized data type for each col.
-
-
-
-"Saving the data frame to a .Rda-file for the purpose of analysis.r.
-This is done for every data frames we have done in this file, the main purpose 
-is the the running time issue caused by large datasets, and this will reduce
-the loading time significantly."
-save(data_norway, file = "../results/data_norway.Rda") 
+  mutate(country = "Norway") 
 
 
 
@@ -272,7 +241,7 @@ data_sweden_2015_2019 <-
     names_to = "values",
     values_to = "deaths") %>%
   mutate(year = "2015-2019",
-         gender = genderFunc_vector(sapply(strsplit(values ," "), `[`, 1)), 
+         gender = sapply(strsplit(values ," "), `[`, 1), 
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>%
   select(-"values") %>%
   rename(week = "Vecka")
@@ -286,7 +255,7 @@ data_sweden_2020 <- data_sweden %>%
     names_to = "values",
     values_to = "deaths") %>%
   mutate(year = "2020",
-         gender = genderFunc_vector(sapply(strsplit(values ," "), `[`, 1)),
+         gender = sapply(strsplit(values ," "), `[`, 1),
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>% 
   select(-"values") %>% 
   rename(week = "Vecka") %>%
@@ -308,25 +277,7 @@ data_sweden <- rbind(data_sweden_2015_2019,
          year, 
          week, 
          deaths, 
-         country) %>% 
-  transform(gender = as.factor(gender),
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.character(year),
-            deaths = as.integer(deaths),
-            country = as.factor(country))
-
-
-"Saving the data frame to a .Rda-file for the purpose of analysis.r.
-This is done for every data frames we have done in this file, the main purpose 
-is the the running time issue caused by large datasets, and this will reduce
-the loading time significantly."
-save(data_sweden, file = "../results/data_sweden.Rda")
-
-
-"Removes unuseful data frames, because of the joint data frame (data_sweden)"
-rm(data_sweden_2015_2019) 
-rm(data_sweden_2020) 
+         country) 
 
 
 
@@ -345,13 +296,9 @@ data_denmark <-
   data_denmark[(25:70),-1] %>%
   rename(gender = " _1",
          agegroup = " _2") %>%
-  mutate(gender = genderFunc_vector(substr(gender, 1, 1)))
+  mutate(gender = substr(gender, 1, 1)) %>%
+  changeNonRecurringRow(., 1, 23) # Fills non recurring rows with given genders 
 
-
-
-"Fills non recurring rows with given genders (check out the description for 
-changeNonRecurringRow in function section)"
-data_denmark  <- changeNonRecurringRow(data_denmark, 1, 23)
 
 
 
@@ -380,21 +327,7 @@ data_denmark <-
            week) %>%
   summarise(deaths = sum(deaths)) %>%
   ungroup() %>%                       # Ungroup such that mutation is allowed
-  mutate(country = "Denmark") %>% 
-  transform(gender = as.factor(gender),
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.numeric(year),
-            deaths = as.numeric(deaths),
-            country = as.factor(country))
-
-
-
-"Saving the data frame to a .Rda-file for the purpose of analysis.r.
-This is done for every data frames we have done in this file, the main purpose 
-is the the running time issue caused by large datasets, and this will reduce
-the loading time significantly."
-save(data_denmark, file = "../results/data_denmark.Rda")
+  mutate(country = "Denmark")
 
 
 
@@ -483,8 +416,7 @@ data_uk <- do.call("rbind", list(data_uk_2014,
                                  data_uk_2018, 
                                  data_uk_2019, 
                                  data_uk_2020)) %>% 
-  mutate(gender = genderFunc_vector(gender),
-         agegroup = getAgeVector(agegroup),
+  mutate(agegroup = getAgeVector(agegroup),
          agegroup = ageUniformityUKVector(agegroup),
          agegroup = ageGroup_vector(agegroup)) %>%
   select(gender, 
@@ -499,31 +431,7 @@ data_uk <- do.call("rbind", list(data_uk_2014,
            week) %>%
   summarise(deaths = sum(deaths)) %>%
   ungroup() %>%
-  mutate(country = "UK") %>%
-  transform(gender = as.factor(gender),
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.numeric(year),
-            deaths = as.numeric(deaths),
-            country = as.factor(country))
-
-
-
-"Saving the data frame to a .Rda-file for the purpose of analysis.r.
-This is done for every data frames we have done in this file, the main purpose 
-is the the running time issue caused by large datasets, and this will reduce
-the loading time significantly."
-save(data_uk, file = "../results/data_uk.Rda")
-
-
-# Removes unwanted df's
-rm(data_uk_2014)
-rm(data_uk_2015)
-rm(data_uk_2016)
-rm(data_uk_2017)
-rm(data_uk_2018)
-rm(data_uk_2019)
-rm(data_uk_2020)
+  mutate(country = "UK")
 
 
 ##### Data France -----------------------------------------------------------
@@ -568,7 +476,6 @@ data_france <- sapply(datafiles_france, read_csv2, simplify=FALSE) %>%
             year = as.numeric(year),
             deaths = as.numeric(deaths),
             country = as.factor(country))
-
 
 
 save(data_france, file = "../results/data_france.Rda")
