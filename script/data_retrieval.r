@@ -41,8 +41,6 @@ changeNonRecurringRow <- function(df,
 
 
 
-
-
 "Function that returns agegroups for a given age.
 Returns standardized agegroup as string"
 ageGroup <- function(age) {
@@ -221,13 +219,6 @@ data_norway  %<>%
   summarise(deaths = sum(deaths)) %>%
   ungroup() %>%                       # Ungrouped such that mutation is allowed  
   mutate(country = "Norway") 
-
-
-"Saving the data frame to a .Rda-file for the purpose of analysis.r.
-This is done for every data frames we have done in this file, the main purpose 
-is the the running time issue caused by large datasets, and this will reduce
-the loading time significantly."
-save(data_norway, file = "../results/data_norway.Rda") 
 
 
 
