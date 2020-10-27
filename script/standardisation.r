@@ -47,7 +47,7 @@ standardiseGender <- function(df, genderVec) {
     transform(gender = as.factor(gender),  
               agegroup = as.factor(agegroup),
               week = as.numeric(week),
-              year = as.numeric(year),
+              year = as.factor(year),
               deaths = as.numeric(deaths),
               country = as.factor(country)) 
   return (df)
@@ -59,3 +59,8 @@ standardiseGender <- function(df, genderVec) {
 
 norway_standard <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
 save(data_norway, file = "../results/data_norway.Rda")  # Save to .rda file
+
+
+
+# Sweden
+sweden_standard <- standardiseGender(data_sweden, c("M", "K"))

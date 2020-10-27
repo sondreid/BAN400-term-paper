@@ -241,7 +241,7 @@ data_sweden_2015_2019 <-
     names_to = "values",
     values_to = "deaths") %>%
   mutate(year = "2015-2019",
-         gender = genderFunc_vector(sapply(strsplit(values ," "), `[`, 1)), 
+         gender = sapply(strsplit(values ," "), `[`, 1), 
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>%
   select(-"values") %>%
   rename(week = "Vecka")
@@ -255,7 +255,7 @@ data_sweden_2020 <- data_sweden %>%
     names_to = "values",
     values_to = "deaths") %>%
   mutate(year = "2020",
-         gender = genderFunc_vector(sapply(strsplit(values ," "), `[`, 1)),
+         gender = sapply(strsplit(values ," "), `[`, 1),
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>% 
   select(-"values") %>% 
   rename(week = "Vecka") %>%
@@ -277,14 +277,7 @@ data_sweden <- rbind(data_sweden_2015_2019,
          year, 
          week, 
          deaths, 
-         country) %>% 
-  transform(gender = as.factor(gender),
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.character(year),
-            deaths = as.integer(deaths),
-            country = as.factor(country))
-
+         country) 
 
 "Saving the data frame to a .Rda-file for the purpose of analysis.r.
 This is done for every data frames we have done in this file, the main purpose 
