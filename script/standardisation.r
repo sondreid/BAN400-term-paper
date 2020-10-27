@@ -58,7 +58,7 @@ standardiseGender <- function(df, genderVec) {
     transform(gender = as.factor(gender),  
               agegroup = as.factor(agegroup),
               week = as.numeric(week),
-              year = as.factor(year),
+              year = as.character(year),
               deaths = as.numeric(deaths),
               country = as.factor(country)) 
   return (df)
@@ -71,23 +71,23 @@ standardiseGender <- function(df, genderVec) {
 This is done for every data frames we have done in this file, the main purpose 
 is the the running time issue caused by large datasets, and this will reduce
 the loading time significantly."
-norway_standard <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
-save(norway_standard, file = "../results/data_norway.Rda")  # Save to .rda file
+data_norway <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
+save(data_norway, file = "../results/data_norway.Rda")  # Save to .rda file
 
 
 # Sweden
-sweden_standard <- standardiseGender(data_sweden, c("M", "K"))
-save(sweden_standard, file = "../results/data_sweden.Rda")
+data_sweden <- standardiseGender(data_sweden, c("M", "K"))
+save(data_sweden, file = "../results/data_sweden.Rda")
 rm(data_sweden_2015_2019) 
 rm(data_sweden_2020) 
 
 # Denmark
-denmark_standard <- standardiseGender(data_denmark, c("M", "W"))
-save(denmark_standard, file = "../results/data_denmark.Rda")
+data_denmark <- standardiseGender(data_denmark, c("M", "W"))
+save(data_denmark, file = "../results/data_denmark.Rda")
 
 #UK
-uk_standard <- standardiseGender(data_denmark, c("M", "W"))
-save(uk_standard, file = "../results/data_uk.Rda")
+data_uk <- standardiseGender(data_uk, c("M", "W"))
+save(data_uk, file = "../results/data_uk.Rda")
 rm(data_uk_2014)
 rm(data_uk_2015)
 rm(data_uk_2016)

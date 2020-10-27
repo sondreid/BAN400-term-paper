@@ -1,6 +1,7 @@
 library(shiny)
 source("analysis.r")
 
+
 ui <- fluidPage(
   sliderInput(inputId = "num",
               label = "Choose a number",
@@ -19,5 +20,18 @@ server <- function(input, output){
     })
 }
 
+shinyApp(ui = ui, server = server)
+
+ui <- fluidPage(
+  titlePanel("Plots"),
+  
+
+)
+
+server <- function(input, output) {
+  
+}
+
+# Run the app ----
 shinyApp(ui = ui, server = server)
 
