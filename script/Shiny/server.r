@@ -2,15 +2,24 @@ library(shiny)
 library(ggplot2)
 library(rsconnect)
 
+load("totaldata.Rda")
+
+
 server <- function(input, output) {
   
-  dataset <- reactive({
-    diamonds[sample(nrow(diamonds), input$sampleSize),]
+  #observeEvent(input$clicks, {
+  #  print(as.numeric(input$clicks))
+  #})
+  
+  #observe({print(input$clicks)})
+  
+  data <- reactive({
+    totaldata
   })
   
   output$plot <- renderPlot({
     
-    p <- ggplot(dataset(), aes_string(x=input$x, y=input$y)) + geom_point()
+    p <- ggplot(data(), aes_string(x=input$x, y=input$y)) + geom_point()
     
     if (input$color != 'None')
       p <- p + aes_string(color=input$color)
@@ -30,8 +39,6 @@ server <- function(input, output) {
   
 }
 
-
-deployApp()
 
 
 

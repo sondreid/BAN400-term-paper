@@ -1,3 +1,4 @@
+setwd("/Users/olaiviken/OneDrive - Norges Handelshøyskole/MASTER/BAN400/Term paper/BAN400-term-paper/script")
 ######################### Data Analysis Script #################################
 "Support for utf-8 encoding"
 options(encoding="utf-8") 
@@ -223,7 +224,7 @@ a consolidated data frame"
 totaldata <- assembleAllData() 
 
 
-
+save(totaldata, file = "../script/Shiny/totaldata.Rda")
 
 ##### Test statistics-----------------------------------------------------------
 "Is the difference in deaths and expected deaths statistically significant?"

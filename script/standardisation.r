@@ -1,3 +1,4 @@
+setwd("/Users/olaiviken/OneDrive - Norges Handelshøyskole/MASTER/BAN400/Term paper/BAN400-term-paper/script")
 ###################### Data standardisation script ##########################
 
 "Libraries "
@@ -71,7 +72,7 @@ standardiseGender <- function(df, genderVec) {
 This is done for every data frames we have done in this file, the main purpose 
 is the the running time issue caused by large datasets, and this will reduce
 the loading time significantly."
-data_norway <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kj�nn"))
+data_norway <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
 save(data_norway, file = "../results/data_norway.Rda")  # Save to .rda file
 
 
@@ -95,3 +96,4 @@ rm(data_uk_2017)
 rm(data_uk_2018)
 rm(data_uk_2019)
 rm(data_uk_2020)
+
