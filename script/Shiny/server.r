@@ -31,6 +31,8 @@ server <- function(input, output) {
 }
 
 
+deployApp()
+
 
 
 
