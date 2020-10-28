@@ -41,10 +41,6 @@ ui <- fluidPage(
                              max = max(data$week),
                              value = c(min(data$week), max(data$week))),
                  
-                 
-                 sliderInput('sampleSize', 'Sample Size', min=1, max=nrow(data),
-                             value=min(1000, nrow(data)), step=500, round=0),
-                 
                  selectInput(inputId = 'x', 
                              label = 'X', 
                              choices = names(data),
@@ -56,7 +52,10 @@ ui <- fluidPage(
                              selected = "deaths"),
                  
                              
-                selectInput('color', 'Color', c('None', names(data))),
+                selectInput(inputId = 'color', 
+                            label = 'Color', 
+                            choices = c('None', names(data)),
+                            selected = "gender"),
                  
                  checkboxInput('jitter', 'Jitter'),
                  checkboxInput(inputId = 'smooth', 

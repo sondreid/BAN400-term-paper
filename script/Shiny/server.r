@@ -14,7 +14,7 @@ server <- function(input, output) {
   #observe({print(input$clicks)})
   
   data <- reactive({
-    totaldata
+    totaldata[totaldata$week >= input$week[1] & totaldata$week <= input$week[2],]
   })
   
   output$plot <- renderPlot({
