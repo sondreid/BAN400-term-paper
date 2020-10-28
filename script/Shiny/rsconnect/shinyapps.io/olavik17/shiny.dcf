@@ -1,0 +1,10 @@
+name: shiny
+title:
+username:
+account: olavik17
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3112072
+bundleId: 3791546
+url: https://olavik17.shinyapps.io/shiny/
+when: 1603880861.59883
