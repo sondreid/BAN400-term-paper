@@ -189,8 +189,8 @@ data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx",
 
 
 "Changing the empty columns by replicating gender names (1) and agegroups (2)"
-data_norway  <- changeNonRecurringRow(data_norway, 1, 53) # For gender
-data_norway  <- changeNonRecurringRow(data_norway, 2, 53) # For agegroups
+data_norway  <- changeNonRecurringRow(data_norway, 1, 53) %>% # For gender
+             changeNonRecurringRow(., 2, 53) # For agegroups
 
 
 
@@ -205,10 +205,9 @@ data_norway  %<>%
   rename(gender = "...1",
          agegroup =  "...2", 
          values = "...3") %>% 
-  mutate(week =   sapply(strsplit(values, " "), `[`, 2),     # **
+  mutate(week =   sapply(strsplit(values, " "), `[`, 2),     
          agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
-         agegroup = sapply(strsplit(agegroup ," "), `[`, 1),
-         agegroup = ageGroup_vector(agegroup)) %>%      # Check function section
+         agegroup = sapply(strsplit(agegroup ," "), `[`, 1)) %>%     
   filter(!is.na(gender), 
          year >= 2014, 
          deaths != 0) %>%
@@ -402,9 +401,7 @@ data_uk_2020 <- read_xlsx("../datasett/UK/UK_2020.xlsx",
   custom_clean_data_2020(., 
                          2020,
                          selectColMale = c(1, 38, 40:59), 
-                         selectColFemale =  c(1, 60, 62:81)) %>%
-  mutate(agegroup = getAgeVector(agegroup),
-         agegroup = ageUniformityUKVector(agegroup))
+                         selectColFemale =  c(1, 60, 62:81))
 
 
 
@@ -416,22 +413,19 @@ data_uk <- do.call("rbind", list(data_uk_2014,
                                  data_uk_2018, 
                                  data_uk_2019, 
                                  data_uk_2020)) %>% 
-  mutate(agegroup = getAgeVector(agegroup),
-         agegroup = ageUniformityUKVector(agegroup),
-         agegroup = ageGroup_vector(agegroup)) %>%
-  select(gender, 
-         agegroup, 
-         year, 
-         week , 
-         deaths, 
-         country) %>% 
-  group_by(gender, 
-           agegroup,
-           year, 
-           week) %>%
-  summarise(deaths = sum(deaths)) %>%
-  ungroup() %>%
-  mutate(country = "UK")
+                      select(gender, 
+                             agegroup, 
+                             year, 
+                             week , 
+                             deaths, 
+                             country) %>% 
+                      group_by(gender, 
+                               agegroup,
+                               year, 
+                               week) %>%
+                      summarise(deaths = sum(deaths)) %>%
+                      ungroup() %>%
+                      mutate(country = "UK")
 
 
 ##### Data France -----------------------------------------------------------

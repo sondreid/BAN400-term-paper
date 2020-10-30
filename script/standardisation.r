@@ -17,11 +17,12 @@ library(docstring)
 getStandard <- function() {return("../datasett/Datastandard/data_standard.xlsx") }
 
 
-getFormat <- function(country) {
-  country <- tolower(country)
-  path <- paste("../datasett/", country, "/", country, "_format.xlsx")
-  path <- path %>% gsub(" ", "",.)
-  return (path)
+getFormat <- function(dfName, country) {
+  #' Returns the format file of a given 
+  #' @param
+  dfName <- tolower(dfName)
+  path <- paste("../datasett/", country, "/", dfName, "_format.csv")
+  return (read_csv(path %>% gsub(" ", "",.)))
 }
 
 
@@ -64,6 +65,13 @@ standardiseGender <- function(df, genderVec) {
   return (df)
 }
 
+
+##### Age ----------
+
+standardiseAge <- function(df, country) {
+  standard <- getStandard()
+  
+}
 
 
 # Norway
