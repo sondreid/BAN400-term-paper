@@ -53,18 +53,24 @@ formatCorrectness <- function(df) {
 #### Gender -----------------------------
 
 
-standardiseRows <- function(df, genderVec) {
+standardiseGender <- function(df, country) {
   #' In column gender, the function loops through all rows.
   #' If it finds a match between the genderVector and standardGender it will return the standardGender
   #' NA otherwise
   #' @param df input dataframe
   #' @param genderVec vector of original gender formatting in df
-  standardGender <- getStandard() %>% select(Gender)
+  #'
+  standard <- getStandard() %>% filter(!is.na(Gender))
+  format <- getFormat(country) %>% filter(!is.na(Gender))
   for (k in 1:nrow(df)) {
-    x <- df[["gender"]][k]
-    for (i in 1:length(genderVec)) {
-      if (x == genderVec[i]) df[["gender"]][k] <- standardGender[[1]][i]
+    changedGender <- "No"
+    for (i in 1:length(format$Gender)) {
+      if (df$gender[k] == format$Gender[i]) {
+        df$gender[k] <- standard$Gender[i]
+        changedGender <- "Yes"
+      }
     }
+    if (changedGender == "No") df$gender[k] <- NA
    
   }
   df <- df%>% drop_na()
@@ -73,28 +79,15 @@ standardiseRows <- function(df, genderVec) {
 
 
 
-standardiseGender <- function(df, genderVec) {
-  #' Standardizes a dataframe according to the standards present in getStandard() sheet
-  #' @param df input dataframe
-  #' @param genderVec vector of original gender formatting in df
-  df <- df %>% standardiseRows(., genderVec) %>% 
-    drop_na() %>%
-    transform(gender = as.factor(gender),  
-              agegroup = as.factor(agegroup),
-              week = as.numeric(week),
-              year = as.character(year),
-              deaths = as.numeric(deaths),
-              country = as.factor(country)) 
-  return (df)
-}
-
-
-#### Gender -----------------------------
-
-
+#### Age -----------------------------
 
 standardiseAge <- function(df, country) {
+  #' Returns an age-standardised dataframe
+  #' 
+  #'@param df : input dataframe
+  #'@param country: name of country to be standardised, string
   standard <- getStandard()
+  format <- getFormat(country)
   for (k in 1:nrow(df)) {
     for (i in 1:length(format$Agegroups)) {
       if (df$agegroup[k] == format$Agegroups[i]) {
@@ -107,8 +100,29 @@ standardiseAge <- function(df, country) {
   }
   return (df)
 }
-# test
-norway_standard <- standardiseAge(data_norway, "Norway")
+
+
+############################################################################
+
+standardiseCountry <- function(df, country) {
+  #' Standardizes a dataframe with regard to age and gender
+  #' @param df input dataframe
+  #' @param country name of country, string
+  df <- df %>% 
+    standardiseGender(., country) %>%
+    standardiseAge(., country) %>%
+    drop_na() %>%
+    transform(gender = as.factor(gender),  
+              agegroup = as.factor(agegroup),
+              week = as.numeric(week),
+              year = as.character(year),
+              deaths = as.numeric(deaths),
+              country = as.factor(country)) 
+  return (df)
+}
+#Test
+norway_standard <- standardiseCountry(data_norway, "Norway")
+
 
 
 # Norway
