@@ -205,9 +205,9 @@ data_norway  %<>%
   rename(gender = "...1",
          agegroup =  "...2", 
          values = "...3") %>% 
-  mutate(week =   sapply(strsplit(values, " "), `[`, 2),     
-         agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
-         agegroup = sapply(strsplit(agegroup ," "), `[`, 1)) %>%     
+  mutate(week =   sapply(strsplit(values, " "), `[`, 2)) %>%     
+         #agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
+         #agegroup = sapply(strsplit(agegroup ," "), `[`, 1)) %>%     
   filter(!is.na(gender), 
          year >= 2014, 
          deaths != 0) %>%
@@ -269,8 +269,7 @@ prefered datatypes"
 data_sweden <- rbind(data_sweden_2015_2019, 
                      data_sweden_2020) %>% 
   mutate(country = "Sweden",
-         agegroup = getAgeVector(agegroup),
-         agegroup = ageGroup_vector(agegroup)) %>% 
+         agegroup = getAgeVector(agegroup)) %>% 
   select(gender, 
          agegroup, 
          year, 
@@ -316,7 +315,6 @@ data_denmark <-
   mutate(year = sapply(strsplit(values, "U"),'[', 1),
          week = sapply(strsplit(values, "U"), '[', 2),
          agegroup = getAgeVector(agegroup),
-         agegroup = ageGroup_vector(agegroup),
          country = "Denmark") %>% 
   filter(!is.na(agegroup), 
          year >= 2014) %>%

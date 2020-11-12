@@ -14,16 +14,26 @@ library(docstring)
 #source("data_retrieval.r")
 
 " Retrieve data standard excel sheet "
-getStandard <- function() {return("../datasett/Datastandard/data_standard.xlsx") }
+getStandard <- function() {return(read_csv("../datasett/Datastandard/data_standard.csv")) }
 
 
-getFormat <- function(dfName, country) {
+getFormat <- function( country) {
   #' Returns the format file of a given 
   #' @param
-  dfName <- tolower(dfName)
-  path <- paste("../datasett/", country, "/", dfName, "_format.csv")
-  return (read_csv(path %>% gsub(" ", "",.)))
+  #' 
+  # dfName <- tolower(dfName)
+  
+  path <- paste("../datasett/", country, "/") %>% gsub(" ", "",.)
+  formatFiles <- list.files(path = path, 
+                            pattern = "format", 
+                            full.names = TRUE) 
+  ListofDF <- lapply(formatFiles, read_csv)
+  print(ListofDF)
+  df <- bind_rows(ListofDF)
+  return (df)
 }
+
+path <- paste("../datasett/", "Norway", "/") 
 
 
 
@@ -36,7 +46,7 @@ standardiseRows <- function(df, genderVec) {
   #' NA otherwise
   #' @param df input dataframe
   #' @param genderVec vector of original gender formatting in df
-  standardGender <- read_excel(getStandard()) %>% select(Gender)
+  standardGender <- getStandard() %>% select(Gender)
   for (k in 1:nrow(df)) {
     x <- df[["gender"]][k]
     for (i in 1:length(genderVec)) {
@@ -68,8 +78,14 @@ standardiseGender <- function(df, genderVec) {
 
 ##### Age ----------
 
+getFormatAge <- function(country) 
+
+
 standardiseAge <- function(df, country) {
   standard <- getStandard()
+  
+  
+  
   
 }
 
