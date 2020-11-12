@@ -13,28 +13,41 @@ library(docstring)
 "In case of sourcing the retrieval file directly to this file"
 #source("data_retrieval.r")
 
-" Retrieve data standard excel sheet "
-getStandard <- function() {return(read_csv("../datasett/Datastandard/data_standard.csv")) }
+
+getStandard <- function() {
+  #' Retrieve data standard excel sheet 
+  #' @returns standard dataframe
+  return(read_csv("../datasett/Datastandard/data_standard.csv")) }
 
 
-getFormat <- function( country) {
-  #' Returns the format file of a given 
-  #' @param
-  #' 
-  # dfName <- tolower(dfName)
-  
+getFormat <- function(country) {
+  #' Returns the format file of a given country
+  #' @param country : 
+  #' @returns new dataframe
+ 
   path <- paste("../datasett/", country, "/") %>% gsub(" ", "",.)
   formatFiles <- list.files(path = path, 
                             pattern = "format", 
                             full.names = TRUE) 
   ListofDF <- lapply(formatFiles, read_csv)
-  print(ListofDF)
   df <- bind_rows(ListofDF)
+  formatCorrectness(df) # Check for correctness
   return (df)
 }
 
-path <- paste("../datasett/", "Norway", "/") 
 
+formatCorrectness <- function(df) {
+  #' Checks correctness of format dataframe (imported as csv file)
+  #' @returns Error messsage if error found 
+  colnames <- colnames(df)
+  if (!("Gender" %in% colnames) | !("Agegroups" %in% colnames) | !("AgeStandardGroup" %in% colnames)) {
+    stop("Format error: Missing one or more required columns")
+  }
+  if (length(which(!is.na(testFormat$Agegroups))) != length(which(!is.na(testFormat$AgeStandardGroup)))) {
+    stop("Format error: Missing values in agegroup or agegroupstandard")
+  }
+  
+}
 
 
 #### Gender -----------------------------
@@ -76,13 +89,23 @@ standardiseGender <- function(df, genderVec) {
 }
 
 
-##### Age ----------
+#### Gender -----------------------------
 
 getFormatAge <- function(country) 
 
 
 standardiseAge <- function(df, country) {
   standard <- getStandard()
+  format <- getFormat(country)
+  agecol <- format$Agegroups
+  agestandard <-format$AgeStandardGroup
+  for (k in nrow(df)) {
+    for (i in length(agecol)) {
+      
+    }
+    
+  }
+  
   
   
   
