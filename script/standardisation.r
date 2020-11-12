@@ -91,26 +91,24 @@ standardiseGender <- function(df, genderVec) {
 
 #### Gender -----------------------------
 
-getFormatAge <- function(country) 
 
 
 standardiseAge <- function(df, country) {
   standard <- getStandard()
-  format <- getFormat(country)
-  agecol <- format$Agegroups
-  agestandard <-format$AgeStandardGroup
-  for (k in nrow(df)) {
-    for (i in length(agecol)) {
-      
+  for (k in 1:nrow(df)) {
+    for (i in 1:length(format$Agegroups)) {
+      if (df$agegroup[k] == format$Agegroups[i]) {
+        index <-  format$AgeStandardGroup[i]
+        print(paste("Index", index))
+        df$agegroup[k] <- standard$Agegroups[index]
+      }
     }
     
   }
-  
-  
-  
-  
-  
+  return (df)
 }
+# test
+norway_standard <- standardiseAge(data_norway, "Norway")
 
 
 # Norway
