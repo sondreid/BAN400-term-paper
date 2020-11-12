@@ -91,9 +91,8 @@ standardiseAge <- function(df, country) {
   for (k in 1:nrow(df)) {
     for (i in 1:length(format$Agegroups)) {
       if (df$agegroup[k] == format$Agegroups[i]) {
-        index <-  format$AgeStandardGroup[i]
-        print(paste("Index", index))
-        df$agegroup[k] <- standard$Agegroups[index]
+        standardIndex <-  format$AgeStandardGroup[i]
+        df$agegroup[k] <- standard$Agegroups[standardIndex]
       }
     }
     
