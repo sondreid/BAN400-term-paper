@@ -9,7 +9,6 @@ library(lubridate)
 library(janitor)  
 library(docstring)
 
-
 "In case of sourcing the retrieval file directly to this file"
 #source("data_retrieval.r")
 
@@ -24,7 +23,6 @@ getFormat <- function(country) {
   #' Returns the format file of a given country
   #' @param country : 
   #' @returns new dataframe
- 
   path <- paste("../datasett/", country, "/") %>% gsub(" ", "",.)
   formatFiles <- list.files(path = path, 
                             pattern = "format", 
@@ -43,7 +41,7 @@ formatCorrectness <- function(df) {
   if (!("Gender" %in% colnames) | !("Agegroups" %in% colnames) | !("AgeStandardGroup" %in% colnames)) {
     stop("Format error: Missing one or more required columns")
   }
-  if (length(which(!is.na(testFormat$Agegroups))) != length(which(!is.na(testFormat$AgeStandardGroup)))) {
+  if (length(which(!is.na(df$Agegroups))) != length(which(!is.na(df$AgeStandardGroup)))) {
     stop("Format error: Missing values in agegroup or agegroupstandard")
   }
   
@@ -71,19 +69,22 @@ standardiseGender <- function(df, country) {
       }
     }
     if (changedGender == "No") df$gender[k] <- NA
-   
   }
-  df <- df%>% drop_na()
+  df <- df %>% 
+    drop_na()
   return (df)
 }
 
-
+#Test
+sweden_gender <- standardiseGender(data_sweden, "Sweden")
+norway_gender <- standardiseGender(data_norway, "Norway")
 
 #### Age -----------------------------
 
 standardiseAge <- function(df, country) {
   #' Returns an age-standardised dataframe
-  #' 
+  #' We will end up with at the most the same number of unique agegroups, but if we end up with fewer,
+  #' a group_by -summarise operation is necessary to preserve the number of rows.
   #'@param df : input dataframe
   #'@param country: name of country to be standardised, string
   standard <- getStandard()
@@ -97,6 +98,12 @@ standardiseAge <- function(df, country) {
     }
     
   }
+  
+  
+  df <-  df %>%
+    group_by(gender, agegroup,year,week) %>% #Preserve number of rows
+    summarise(deaths = sum(deaths),
+              country = country) %>% unique()
   return (df)
 }
 
@@ -121,7 +128,7 @@ standardiseCountry <- function(df, country) {
 }
 #Test
 norway_standard <- standardiseCountry(data_norway, "Norway")
-
+sweden_standard <- standardiseCountry(data_sweden, "Sweden")
 
 
 # Norway
@@ -132,6 +139,7 @@ the loading time significantly."
 data_norway <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
 save(data_norway, file = "../results/data_norway.Rda")  # Save to .rda file
 
+save(data_norway,data_sweden,data_denmark, file = "../results/country_data.Rda")  # Save to .rda file
 
 # Sweden
 data_sweden <- standardiseGender(data_sweden, c("M", "K"))
