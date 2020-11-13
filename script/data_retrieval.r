@@ -186,12 +186,9 @@ data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx",
                           range = "Dode1!a4:X1594")
 
 
-
-
 "Changing the empty columns by replicating gender names (1) and agegroups (2)"
 data_norway  <- changeNonRecurringRow(data_norway, 1, 53) %>% # For gender
              changeNonRecurringRow(., 2, 53) # For agegroups
-
 
 
 "Manipulating the norway's data frame.
@@ -206,8 +203,6 @@ data_norway  %<>%
          agegroup =  "...2", 
          values = "...3") %>% 
   mutate(week =   sapply(strsplit(values, " "), `[`, 2)) %>%     
-         #agegroup = sapply(strsplit(agegroup ,"-"), `[`, 1),
-         #agegroup = sapply(strsplit(agegroup ," "), `[`, 1)) %>%     
   filter(!is.na(gender), 
          year >= 2014, 
          deaths != 0) %>%
@@ -224,7 +219,7 @@ data_norway  %<>%
 #### Data Sweden ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns, and selected sheet"
 data_sweden <- 
-  read_excel("../datasett/sweden_scb.xlsx", 
+  read_excel("../datasett/Sweden/sweden_scb.xlsx", 
              sheet = "Tabell 7", 
              range = "Tabell 7!a9:s62")
 
@@ -261,22 +256,19 @@ data_sweden_2020 <- data_sweden %>%
   filter(week <= 33)          # Because of zero deaths recording after week 33
      
 
-
-
 "Combines data frames to a single data frame, mutates agegroup column to contain
 the standardized agegrouping, selects useful columns and coerce these to 
 prefered datatypes"
 data_sweden <- rbind(data_sweden_2015_2019, 
                      data_sweden_2020) %>% 
-  mutate(country = "Sweden",
-         agegroup = getAgeVector(agegroup)) %>% 
+  mutate(country = "Sweden") %>%
+         #agegroup = getAgeVector(agegroup)) %>% 
   select(gender, 
          agegroup, 
          year, 
          week, 
          deaths, 
          country) 
-
 
 
 #### Data Denmark --------------------------------------------------------------

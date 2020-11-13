@@ -1,0 +1,5 @@
+Gender, Agegroups, AgeStandardGroup
+M,0-64, 1
+K,65-79,2
+ ,80-89,3
+ ,90+,4
