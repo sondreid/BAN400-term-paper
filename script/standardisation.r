@@ -113,9 +113,6 @@ ageToGroup <- function(df) {
   }
   return (df)
 }
-#Test
-#agetoGroupfrance <- ageToGroup(data_france)
-
 
 
 standardiseAge <- function(df, country) {
