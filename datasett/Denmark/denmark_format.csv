@@ -1,0 +1,22 @@
+Gender, Agegroups, AgeStandardGroup
+M,0-4 years,1
+W,5-9 years,1
+ ,10-14 years,1
+ ,15-19 years,1
+ ,20-24 years,1
+ ,25-29 years,1
+ ,30-34 years,1
+ ,35-39 years,1
+ ,40-44 years,1
+ ,45-49 years,1
+ ,50-54 years,1
+ ,55-59 years,1
+ ,60-64 years,1
+ ,65-69 years,2
+ ,70-74 years,2
+ ,75-79 years,2
+ ,80-84 years,3
+ ,85-89 years,4
+ ,90-94 years,4
+ ,95-99 years,4
+ ,100 years and over,4

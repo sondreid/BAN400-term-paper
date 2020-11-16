@@ -4,13 +4,14 @@
 library(readxl)
 library(readr)
 library(tidyverse)
+library(magrittr)
 library(types)
 library(lubridate)
 library(janitor)  
 library(docstring)
 
 "In case of sourcing the retrieval file directly to this file"
-#source("data_retrieval.r")
+source("data_retrieval.r")
 
 
 getStandard <- function() {
@@ -48,7 +49,7 @@ formatCorrectness <- function(df) {
 }
 
 
-#### Gender -----------------------------
+#### Gender -----------------------------------------
 
 
 standardiseGender <- function(df, country) {
@@ -57,7 +58,7 @@ standardiseGender <- function(df, country) {
   #' NA otherwise
   #' @param df input dataframe
   #' @param genderVec vector of original gender formatting in df
-  #'
+  #' @returns a gender-standardized dataframe
   standard <- getStandard() %>% filter(!is.na(Gender))
   format <- getFormat(country) %>% filter(!is.na(Gender))
   for (k in 1:nrow(df)) {
@@ -79,7 +80,43 @@ standardiseGender <- function(df, country) {
 sweden_gender <- standardiseGender(data_sweden, "Sweden")
 norway_gender <- standardiseGender(data_norway, "Norway")
 
-#### Age -----------------------------
+#### Age -------------------------------------------
+
+getAge <- function(agestring, index) {
+  #' Function to convert a string og
+  #' @param agestring : string containing ages
+  #' @param index : index of the string to be returned e.g 2 -> returns "84" if agestring "80-84"
+  agestring <- (agestring %>% 
+                  strsplit(., "-"))[[1]] %>% 
+    gsub("\\+", "", .)
+  if (length(agestring) == 1) return (agestring) 
+  return (agestring[index])
+}
+
+
+
+ageToGroup <- function(df) {
+  #' Function to be used if the input dataframe does not have predetermined agegroups, but rather age as numeric valus.
+  #' Categorizes the dataframe ages as per defined in the standard format file 
+  #' @param df : input dataframe
+  standard <- getStandard() %>% filter(!is.na(Agegroups))
+  for (k in 1:nrow(df)) {
+    for (i in 1:length(standard$Agegroups)) {
+      upperlimit <- getAge(standard$Agegroups[i], 2)
+      if (df$agegroup[k] <= upperlimit) {
+        df$agegroup[k] <- standard$Agegroups[i]
+        break
+      }
+      else if(i == length(standard$Agegroups)) df$agegroup[k] <- standard$Agegroups[i]
+      
+    }
+  }
+  return (df)
+}
+#Test
+#agetoGroupfrance <- ageToGroup(data_france)
+
+
 
 standardiseAge <- function(df, country) {
   #' Returns an age-standardised dataframe
@@ -87,18 +124,21 @@ standardiseAge <- function(df, country) {
   #' a group_by -summarise operation is necessary to preserve the number of rows.
   #'@param df : input dataframe
   #'@param country: name of country to be standardised, string
+  #'@returns age-standardized dataframe
   standard <- getStandard()
   format <- getFormat(country)
-  for (k in 1:nrow(df)) {
-    for (i in 1:length(format$Agegroups)) {
-      if (df$agegroup[k] == format$Agegroups[i]) {
-        standardIndex <-  format$AgeStandardGroup[i]
-        df$agegroup[k] <- standard$Agegroups[standardIndex]
+  if (format$Agegroups[1] == "Age") df <- ageToGroup(df) 
+  else {
+    for (k in 1:nrow(df)) {
+      for (i in 1:length(format$Agegroups)) {
+        if (df$agegroup[k] == format$Agegroups[i]) {
+          standardIndex <-  format$AgeStandardGroup[i]
+          df$agegroup[k] <- standard$Agegroups[standardIndex]
+        }
       }
+      
     }
-    
   }
-  
   
   df <-  df %>%
     group_by(gender, agegroup,year,week) %>% #Preserve number of rows
@@ -126,38 +166,23 @@ standardiseCountry <- function(df, country) {
               country = as.factor(country)) 
   return (df)
 }
-#Test
-norway_standard <- standardiseCountry(data_norway, "Norway")
-sweden_standard <- standardiseCountry(data_sweden, "Sweden")
 
 
-# Norway
+
+
+
+# Data storage ------------------------------------------------------------------------
+
+data_norway  %<>% standardiseCountry(., "Norway")
+data_sweden  %<>% standardiseCountry(., "Sweden")
+data_denmark %<>% standardiseCountry(., "Denmark")
+data_uk      %<>% standardiseCountry(., "Denmark")
+data_france  %<>% standardiseCountry(., "France")
+
 "Saving the data frame to a .Rda-file for the purpose of analysis.r.
 This is done for every data frames we have done in this file, the main purpose 
 is the the running time issue caused by large datasets, and this will reduce
 the loading time significantly."
-data_norway <- standardiseGender(data_norway, c("Menn", "Kvinner", "Begge kjønn"))
-save(data_norway, file = "../results/data_norway.Rda")  # Save to .rda file
 
-save(data_norway,data_sweden,data_denmark, file = "../results/country_data.Rda")  # Save to .rda file
+save(data_norway,data_sweden,data_denmark,data_uk,data_france, file = "../datasett/processed_data_all_countries.Rda")  
 
-# Sweden
-data_sweden <- standardiseGender(data_sweden, c("M", "K"))
-save(data_sweden, file = "../results/data_sweden.Rda")
-rm(data_sweden_2015_2019) 
-rm(data_sweden_2020) 
-
-# Denmark
-data_denmark <- standardiseGender(data_denmark, c("M", "W"))
-save(data_denmark, file = "../results/data_denmark.Rda")
-
-#UK
-data_uk <- standardiseGender(data_uk, c("M", "W"))
-save(data_uk, file = "../results/data_uk.Rda")
-rm(data_uk_2014)
-rm(data_uk_2015)
-rm(data_uk_2016)
-rm(data_uk_2017)
-rm(data_uk_2018)
-rm(data_uk_2019)
-rm(data_uk_2020)

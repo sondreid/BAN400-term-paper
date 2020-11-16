@@ -27,12 +27,9 @@ library(DT)
 
 
 
-"Loading data frames retrieved from data_retrieval.r"
-load("../results/data_norway.Rda")
-load("../results/data_sweden.Rda")
-load("../results/data_denmark.Rda")
-load("../results/data_uk.Rda")
-load("../results/data_france.Rda")
+"Loading data frames retrieved from standardisation.r"
+
+load("../datasett/processed_data_all_countries.Rda")
 
 
 #### Functions -----------------------------------------------------------------

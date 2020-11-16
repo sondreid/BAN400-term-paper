@@ -14,7 +14,6 @@ library(janitor)
 
 
 
-
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
 stored element for each new group. The function has following parameters:
@@ -262,7 +261,6 @@ prefered datatypes"
 data_sweden <- rbind(data_sweden_2015_2019, 
                      data_sweden_2020) %>% 
   mutate(country = "Sweden") %>%
-         #agegroup = getAgeVector(agegroup)) %>% 
   select(gender, 
          agegroup, 
          year, 
@@ -274,7 +272,7 @@ data_sweden <- rbind(data_sweden_2015_2019,
 #### Data Denmark --------------------------------------------------------------
 "Reads csv-file with read_delim() and separete it by ';', alternative:
 read_csv2."
-data_denmark <- read_delim("../datasett/danmark_statbank_2013-2020.csv",
+data_denmark <- read_delim("../datasett/Denmark/danmark_statbank_2013-2020.csv",
                            delim = ";",
                            skip = 2)
 
@@ -288,7 +286,6 @@ data_denmark <-
          agegroup = " _2") %>%
   mutate(gender = substr(gender, 1, 1)) %>%
   changeNonRecurringRow(., 1, 23) # Fills non recurring rows with given genders 
-
 
 
 
@@ -306,7 +303,6 @@ data_denmark <-
                values_to = "deaths") %>% 
   mutate(year = sapply(strsplit(values, "U"),'[', 1),
          week = sapply(strsplit(values, "U"), '[', 2),
-         agegroup = getAgeVector(agegroup),
          country = "Denmark") %>% 
   filter(!is.na(agegroup), 
          year >= 2014) %>%
@@ -335,7 +331,6 @@ data_uk_2014 <- read_xls("../datasett/UK/UK_2014.xls",
              selectColFemale =  c(1, 30, 32:38))
 
 
-
 data_uk_2015 <- read_xls("../datasett/UK/UK_2015.xls", 
                          sheet = "Weekly Figures 2015",
                          range = "A3:BB40") %>%
@@ -343,7 +338,6 @@ data_uk_2015 <- read_xls("../datasett/UK/UK_2015.xls",
              2015,
              selectColMale = c(1, 20, 22:28), 
              selectColFemale =  c(1, 29, 31:37))
-
 
 
 data_uk_2016 <- read_xls("../datasett/UK/UK_2016.xls", 
@@ -354,7 +348,6 @@ data_uk_2016 <- read_xls("../datasett/UK/UK_2016.xls",
              2016,
              selectColMale = c(1, 20, 22:28), 
              selectColFemale =  c(1, 29, 31:37))
-
 
 
 data_uk_2017 <- read_xls("../datasett/UK/UK_2017.xls", 
@@ -416,7 +409,13 @@ data_uk <- do.call("rbind", list(data_uk_2014,
                       summarise(deaths = sum(deaths)) %>%
                       ungroup() %>%
                       mutate(country = "UK")
-
+rm(data_uk_2014)
+rm(data_uk_2015)
+rm(data_uk_2016)
+rm(data_uk_2017)
+rm(data_uk_2018)
+rm(data_uk_2019)
+rm(data_uk_2020)
 
 ##### Data France -----------------------------------------------------------
 "Gather csv filename from the France-folder in to a list"
@@ -444,8 +443,8 @@ data_france <- sapply(datafiles_france, read_csv2, simplify=FALSE) %>%
          date_born = ymd(paste(year_born, month_born, day_born)), ### Convert year month to single date of birth
          date_dead = ymd(paste(year, month_dead, day_dead)),      ### Convert year month to single date of death
          week = week(ymd(paste(year, month_dead, day_dead))),     ## Week of death
-         age = as.period(interval(date_born, date_dead), unit = "year")$year, ## Age at death
-         agegroup = ageGroup_vector(age)) %>%
+         agegroup = as.period(interval(date_born, date_dead), unit = "year")$year) %>% ## Age at death
+         #agegroup = ageGroup_vector(age)) %>%
   filter(!is.na(agegroup)) %>% 
   group_by(gender,
            agegroup,
@@ -453,16 +452,8 @@ data_france <- sapply(datafiles_france, read_csv2, simplify=FALSE) %>%
            week) %>% 
   summarise(deaths = n()) %>%
   ungroup() %>%
-  mutate(country = "France") %>% 
-  transform(gender = as.factor(gender),
-            agegroup = as.factor(agegroup),
-            week = as.numeric(week),
-            year = as.numeric(year),
-            deaths = as.numeric(deaths),
-            country = as.factor(country))
+  mutate(country = "France")
 
-
-save(data_france, file = "../results/data_france.Rda")
 
 
 
