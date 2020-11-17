@@ -2,7 +2,7 @@
 library(shiny)
 library(ggplot2)
 
-load("totaldata.Rda")
+load("data/totaldata.Rda")
 
 data <- totaldata
 
@@ -41,6 +41,12 @@ ui <- fluidPage(
                              max = max(data$week),
                              value = c(min(data$week), max(data$week))),
                  
+                 checkboxGroupInput(inputId = "countries",
+                                    label = "Select countries",
+                                    choices = levels(data$country),
+                                    choiceNames = names(data),
+                                    selected = levels(data$country)),
+                 
                  selectInput(inputId = 'x', 
                              label = 'X', 
                              choices = names(data),
@@ -57,9 +63,20 @@ ui <- fluidPage(
                             choices = c('None', names(data)),
                             selected = "gender"),
                  
-                 checkboxInput('jitter', 'Jitter'),
-                 checkboxInput(inputId = 'smooth', 
-                               label = 'Smooth'),
+                 checkboxInput(inputId = 'jitter', 
+                               label = 'Jitter'),
+                 
+                checkboxInput(inputId = 'smooth', 
+                              label = 'Smooth',
+                              value = TRUE),
+                
+                checkboxInput(inputId = "actual",
+                             label = "Actual deaths",
+                             value = TRUE),
+                
+                 checkboxInput(inputId = "expected",
+                               label = "Expected deaths",
+                               value = TRUE),
                  
                  selectInput(inputId = 'facet_row', 
                              label = 'Facet Row', 
@@ -76,8 +93,19 @@ ui <- fluidPage(
                  plotOutput('plot')
                ))
              ),
+    
+    # Partners         
+    tabPanel(title = "Table", 
+             fluidRow(
+               
+               br(),
+               p("By filtering data in the table, the plot will adjust" ,style="text-align:justify;color:white;background-color:gray;padding:15px;border-radius:10px"),
+               br()),
              
-    tabPanel(title = "Plot", "Interactive plots")
+             fluidRow(  
+               column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
+               column(6, plotOutput('ggplotTable', height = 500), style = "color:white; ")
+             ))
   ),
 
 )

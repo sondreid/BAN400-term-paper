@@ -5,8 +5,8 @@ account: olavik17
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3112072
-bundleId: 3793383
+bundleId: 3793736
 url: https://olavik17.shinyapps.io/shiny/
-when: 1603911499.34572
+when: 1603917746.66601
 asMultiple: FALSE
 asStatic: FALSE
