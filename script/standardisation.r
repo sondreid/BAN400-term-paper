@@ -1,3 +1,4 @@
+setwd("/Users/olaiviken/OneDrive - Norges Handelshøyskole/MASTER/BAN400/Term paper/BAN400-term-paper/script")
 ###################### Data standardisation script ##########################
 
 "Libraries "

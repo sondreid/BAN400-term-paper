@@ -1,3 +1,6 @@
+setwd("/Users/olaiviken/OneDrive - Norges Handelshøyskole/MASTER/BAN400/Term paper/BAN400-term-paper/script")
+
+
 ###################### Data retrieval/cleaning script ##########################
 "Support for utf-8 encoding"
 options(encoding="utf-8")
