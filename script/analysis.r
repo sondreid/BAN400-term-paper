@@ -1,4 +1,3 @@
-setwd("/Users/olaiviken/OneDrive - Norges Handelshøyskole/MASTER/BAN400/Term paper/BAN400-term-paper/script")
 ######################### Data Analysis Script #################################
 "Support for utf-8 encoding"
 options(encoding="utf-8") 
@@ -23,7 +22,7 @@ library(DT)
 
 
 "In case of sourcing the retrieval file directly to this file"
-source("standardisation.r")
+#source("standardisation.r")
 
 
 
