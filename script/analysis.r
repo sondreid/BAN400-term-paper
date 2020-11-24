@@ -122,8 +122,6 @@ addExpectedDeaths <- function(df) {
   return (new_df)
 }
 
-#Tests
-testDF <- addExpectedDeaths(data_norway)
 
 "Rowbind all datasets to a combined dataset, calling addExpectedDeaths()"
 assembleAllData <- function(dfVector = c("data_norway", 
@@ -219,8 +217,6 @@ plot_pdf <- function(filename, plot){
 a consolidated data frame"
 totaldata <- assembleAllData() 
 
-
-save(totaldata, file = "../script/Shiny/totaldata.Rda")
 
 ##### Test statistics-----------------------------------------------------------
 "Is the difference in deaths and expected deaths statistically significant?"
@@ -375,3 +371,5 @@ longTable <- function() {
   return (outputtable)
 }
 
+save(longTable_data, file = "Shiny/data/longTable_data.Rda")
+save(totaldata, file = "Shiny/data/totaldata.Rda")

@@ -21,7 +21,7 @@ library(DT)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/longTable_data.Rda")
-
+source("ui.r")
 server <- function(input, output) {
   
   #observeEvent(input$clicks, {
@@ -63,7 +63,6 @@ server <- function(input, output) {
   
   # Partners
   output$ggplotTable <- renderPlot ({
-    req("analysis.r")
     longTable_data_selection <- longTable_data[, c("week", "excess_deaths")] # Plot selection data
     s1 <- input$tableALL_rows_all  # All filtered rows
     df1 <- longTable_data_selection 
@@ -122,7 +121,7 @@ server <- function(input, output) {
   
 }
 
-
-
+# Remove comment for live test
+#shinyApp(ui, server)
 
 

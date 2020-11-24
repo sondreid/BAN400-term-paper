@@ -76,9 +76,6 @@ standardiseGender <- function(df, country) {
   return (df)
 }
 
-#Test
-sweden_gender <- standardiseGender(data_sweden, "Sweden")
-norway_gender <- standardiseGender(data_norway, "Norway")
 
 #### Age -------------------------------------------
 
@@ -173,7 +170,7 @@ standardiseCountry <- function(df, country) {
 data_norway  %<>% standardiseCountry(., "Norway")
 data_sweden  %<>% standardiseCountry(., "Sweden")
 data_denmark %<>% standardiseCountry(., "Denmark")
-data_uk      %<>% standardiseCountry(., "Denmark")
+data_uk      %<>% standardiseCountry(., "UK")
 data_france  %<>% standardiseCountry(., "France")
 
 "Saving the data frame to a .Rda-file for the purpose of analysis.r.
