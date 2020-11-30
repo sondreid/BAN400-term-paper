@@ -103,7 +103,7 @@ ui <- fluidPage(
              
              fluidRow(  
                column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
-               column(6, plotOutput('ggplotTable', height = 500), style = "color:white; ")
+               column(6, plotlyOutput('ggplotTable', height = 500), style = "color:white; ")
              ))
   ),
 

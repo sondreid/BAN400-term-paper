@@ -62,7 +62,7 @@ server <- function(input, output) {
   })
   
   # Partners
-  output$ggplotTable <- renderPlot ({
+  output$ggplotTable <- renderPlotly ({
     longTable_data_selection <- longTable_data[, c("week", "excess_deaths")] # Plot selection data
     s1 <- input$tableALL_rows_all  # All filtered rows
     df1 <- longTable_data_selection 
@@ -77,7 +77,7 @@ server <- function(input, output) {
       dat$Group <- rep("Original data", times = nrow(df1))
     }
     cols = c("Firebrick")
-    dat %>%
+    plot <- dat %>%
       ggplot() +
       geom_smooth(aes(x = week,
                       y = excess_deaths,
@@ -85,9 +85,8 @@ server <- function(input, output) {
       labs(x = "Weeks", y = "Excess deaths") +
       theme(plot.background=element_rect()) +
       ggtitle("Filtered plot")
-    
-    
-    
+    ggplotly(plot)
+
     
   })
   
@@ -122,6 +121,6 @@ server <- function(input, output) {
 }
 
 # Remove comment for live test
-#shinyApp(ui, server)
+shinyApp(ui, server)
 
 
