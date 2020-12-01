@@ -1,7 +1,6 @@
 library(shiny)
 library(ggplot2)
 library(rsconnect)
-# Partners libriaries
 library(rsconnect)
 library(kableExtra) 
 library(tidyverse)    
@@ -20,28 +19,14 @@ library(formattable)
 library(DT)
 
 load(file = "data/totaldata.Rda")
-load(file = "data/longTable_data.Rda")
 source("ui.r")
 server <- function(input, output) {
   
-  #observeEvent(input$clicks, {
-  #  print(as.numeric(input$clicks))
-  #})
-  
-  #observe({print(input$clicks)})
-  
-  data <- reactive({
-    totaldata[totaldata$week >= input$week[1] & totaldata$week <= input$week[2] & totaldata$country %in% input$countries,]
-  })
-  
-  # Partners 
-  rda <- reactive({
-    load(file="data/longTable_data.Rda")
-  })
-  
-  # Partners
+  longTable_data <- totaldata %>%
+    select(-year)
+  # Datatable
   output$tableALL  <- DT :: renderDataTable({
-    load(file="data/longTable_data.Rda")
+    #load(file="data/longTable_data.Rda")
     datatable(data = longTable_data, 
               colnames = c("Gender", 
                            "Agegroup", 
@@ -61,7 +46,7 @@ server <- function(input, output) {
     #longTable(5, TRUE, c(5, 10, 15, 20, 50, 100, 200, 500))}
   })
   
-  # Partners
+  # Plot corresponding to datatable
   output$ggplotTable <- renderPlotly ({
     longTable_data_selection <- longTable_data[, c("week", "excess_deaths")] # Plot selection data
     s1 <- input$tableALL_rows_all  # All filtered rows
@@ -89,7 +74,11 @@ server <- function(input, output) {
 
     
   })
-  
+  # Data treatment for plot at page 1
+  data <- reactive({
+    totaldata[totaldata$week >= input$week[1] & totaldata$week <= input$week[2] & totaldata$country %in% input$countries,]
+  })
+  #' Plot at page 1
   output$plot <- renderPlot({
     
     p <- ggplot(data(), aes_string(x=input$x, y=input$y))

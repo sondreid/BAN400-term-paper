@@ -3,7 +3,6 @@
 options(encoding="utf-8")
 
 
-
 "Libraries for retrieval and cleaning"
 library(readxl)
 library(readr)
@@ -11,7 +10,6 @@ library(tidyverse)
 library(types)
 library(lubridate)
 library(janitor)  
-
 
 
 #### Functions -----------------------------------------------------------------
@@ -38,56 +36,12 @@ changeNonRecurringRow <- function(df,
 }
 
 
-
-
-"Function that returns agegroups for a given age.
-Returns standardized agegroup as string"
-ageGroup <- function(age) {
-  age <- as.numeric(age)
-  if(is.na(age)) return (NA)
-  else if (0 <= age & age <= 64) return ("0-64")
-  else if (65 <= age & age <= 79) return ("65-79")
-  else if (80 <= age & age <= 84) return ("80-84")
-  else return ("85+")
-}
-
-ageGroup_vector <- Vectorize(ageGroup)        # Vectorizing the given function
-
-
-
-"Removes - and + from input agestring. Is a simple function that splits the
-string by '-' by calling the strsplit-function and extracts the first element 
-(lowest age) and also arrange that '+' sign by replacing it with an empty string"
-getAge <- function(agestring) {
-  agestring <- (agestring %>% 
-                  strsplit(., "-"))[[1]][1] %>% 
-    gsub("\\+", "", .)
-  return (agestring)
-}
-
-getAgeVector <- Vectorize(getAge)       # Vectorizing the given function
-
-
-
-"Outputs a specific age for an input ageinterval. Specifically for UK data"
-ageUniformityUK <- function(age) {
-  age <- as.numeric(age)
-  if(is.na(age)) return (NA)
-  else if (0 <= age & age <= 14) return (1)
-  else if (15 <= age & age <= 44) return (15)
-  else if (45 <= age & age <= 64) return (45)
-  else if (65 <= age & age <= 74) return (65)
-  else if (75 <= age & age <= 84) return (80)
-  else return (85)
-}
-ageUniformityUKVector <- Vectorize(ageUniformityUK) # Vectorized function
-
-
 "Function spesific to the UK dataset (2014-2019) that cleans the data.
 The function itself transposes the dataset into two separated data frames
 of male and female, and rowbinds them at the end. 
 * pivot_longer() is a function that decreases selected columns and increases
 number of rows."
+
 clean_data <- function(df, 
                        year =? chr, 
                        selectColMale, 
@@ -456,16 +410,10 @@ data_france <- sapply(datafiles_france, read_csv2, simplify=FALSE) %>%
 
 
 
-
 #### Remove functions that are no longer needed in memory ----------------------
-rm(ageGroup)
-rm(ageGroup_vector)
-rm(ageUniformityUK)
-rm(ageUniformityUKVector)
+
 rm(changeNonRecurringRow)
 rm(clean_data)
 rm(custom_clean_data_2020)
-rm(getAge)
-rm(getAgeVector)
 rm(datafiles_france)
 

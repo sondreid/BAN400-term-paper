@@ -22,7 +22,7 @@ library(DT)
 
 
 "In case of sourcing the retrieval file directly to this file"
-#source("standardisation.r")
+source("standardisation.r")
 
 
 
@@ -331,9 +331,6 @@ shortTable_data <- totaldataFilter  %>%
 
 
 
-longTable_data <- totaldata %>%
-  select(-year)
-                
               
               
 "Function that returns shortTableData using the formattable package"
@@ -371,5 +368,5 @@ longTable <- function() {
   return (outputtable)
 }
 
-save(longTable_data, file = "Shiny/data/longTable_data.Rda")
+
 save(totaldata, file = "Shiny/data/totaldata.Rda")
