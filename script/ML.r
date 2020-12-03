@@ -38,7 +38,7 @@ totaldata %<>%
   transform(week = as.factor(week),
             country = as.factor(country),
             year   = as.factor(year)) %>%
-  select(country, week, gender, agegroup, deaths, excess_deaths)                  
+  select(country, gender, agegroup, deaths, excess_deaths)                  
                   
       
 intrain <- createDataPartition(y = totaldata$excess_deaths,
@@ -100,7 +100,7 @@ print(SVMRadialmodel)
 
 stopCluster(cl) #Stop cluster 
 
-### Evaluation -------
+### Evaluation -----------------------------------------------------------------------
 
 modelList <- list(SVMmodel, RFmodel)
 evaluateModels <- function(modelList, testData, feature) {
@@ -119,7 +119,7 @@ evaluateModels <- function(modelList, testData, feature) {
   return (bestModel)
 }
 
-#Test
+
 bestModel <- evaluateModels(modelList, test_data, "excess_deaths")
 print(bestModel)
 predict(linearreg, test_data)
@@ -129,37 +129,29 @@ svmPrediction <- predict(SVMmodel, newdata = test_data)
 
  
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
-test <- postResample(pred = svmPrediction, obs = test_data$excess_deaths)[1]
+
+
+
 ### Prediction #---------------------------------------------
-get_predicted_score <- function(model = RFmodel, country, week,gender,agegroup,deaths){
-    
+get_predicted_score <- function(model = bestModel, country,gender,agegroup,deaths){
+    #'
+    #'Returns a prediction based on an input regression model and attributes of country, gender, agegroup and number of deaths
+    #'As per default the bestModel is chosen
     df <- 
       data.frame(
         country = as.factor(country),
-        week = as.factor(week),
         gender = as.factor(gender),
         agegroup = as.factor(agegroup),
         deaths = as.numeric(deaths)
       )
-    
-    print(df)
     return (predict(model,
                     newdata = df))
-    #df <- totaldata
-    
-    #data.frame(
-     # scoring_date = as.Date(Sys.Date()),
-     #prob = 
-     #   predict(
-      #    model, 
-       #   newdat = df,
-      #    type = "prob")$Default)
   }
 #Test prediction
 
-get_predicted_score(country = "UK",week = 17, gender = "F", agegroup = "85+", deaths = 5600)
+get_predicted_score(country = "UK", gender = "F", agegroup = "85+", deaths = 5600)
 #SVM
-get_predicted_score(model = SVMmodel, country = "UK",week = 17, gender = "F", agegroup = "85+", deaths = 5600)
+get_predicted_score(model = SVMmodel, country = "UK", gender = "F", agegroup = "85+", deaths = 5600)
 
 
 

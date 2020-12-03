@@ -9,7 +9,7 @@ data <- totaldata
 ui <- fluidPage(
   
   fluidRow(
-    column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "covid_19.png"))),
+    column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "www/covid_19.png"))),
     column(width = 10, align = "center", headerPanel(tags$h1("Covid-19")))
   ),
   
@@ -105,11 +105,28 @@ ui <- fluidPage(
                column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
                column(6, plotlyOutput('ggplotTable', height = 500), style = "color:white; ")
              )),
-    tabPanel(title = "Prediction by machine learning",
-             fluidrow(
+    tabPanel(title = "Prediction",
+             
+             fluidRow(
                br(),
-               p("Prediction"),
-               br())
+               p("Prediction by machine learning", style="text-align:justify;color:white;background-color:gray;padding:15px;border-radius:10px"),
+               br()),
+             
+             fluidRow(
+               sidebarLayout(
+                 sidebarPanel(
+                   textInput("Enter coutry", h3("Country"),
+                             value = "Enter..")
+                 ),
+               mainPanel(
+                 br(),
+                 h3("Prediction"),
+                 br()
+               )
+             )
+             )
+             
+             
              )
   ),
 
