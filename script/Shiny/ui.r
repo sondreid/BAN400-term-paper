@@ -104,7 +104,13 @@ ui <- fluidPage(
              fluidRow(  
                column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
                column(6, plotlyOutput('ggplotTable', height = 500), style = "color:white; ")
-             ))
+             )),
+    tabPanel(title = "Prediction by machine learning",
+             fluidrow(
+               br(),
+               p("Prediction"),
+               br())
+             )
   ),
 
 )

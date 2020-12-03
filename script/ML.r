@@ -10,6 +10,7 @@ library(magrittr)
 library(gbm)
 library(docstring)
 library(doParallel)
+library(randomForest)
 
 
 "Loading data frames retrieved from standardisation.r"
@@ -64,8 +65,8 @@ linnearreg <- train(excess_deaths ~ week,
 
 
 control <- trainControl(method = "repeatedcv",
-                 n = 10,
-                 repeats = 5)
+                 n = 15,
+                 repeats = 10)
 
 
 RFmodel <- train(excess_deaths ~.,
@@ -74,42 +75,94 @@ RFmodel <- train(excess_deaths ~.,
                  metric = "RMSE",
                  trcontrol = control)
 
-
-
+SVMmodel <- train(excess_deaths ~.,
+                  data = training_data,
+                  method = "svmPoly",
+                  metric = "RMSE",
+                  trcontrol = control,
+                  tunelength = 4)
+SVMRadialmodel <- train(excess_deaths ~.,
+                  data = training_data,
+                  method = "svmRadial",
+                  metric = "RMSE",
+                  trcontrol = control,
+                  tunelength = 4)
 
 #Print relevant statistics
 print(linnearreg)
 summary(linnearreg)
+## RF model
 print(RFmodel)
+
+##SVM model
+print(SVMmodel)
+print(SVMRadialmodel)
 
 stopCluster(cl) #Stop cluster 
 
-### Prediction #---------------------------------------------
+### Evaluation -------
+
+modelList <- list(SVMmodel, RFmodel)
+evaluateModels <- function(modelList, testData, feature) {
+  #' Returns the best fitted model based on RMSE ( )
+  #'@param modelList: list of potential models
+  bestRMSE <- Inf
+  bestModel <- modelList[1]
+  for (model in modelList) {
+    prediction <- predict(model, newdata = testData)
+    RMSE <- postResample(pred = prediction, obs = testData[[feature]])[[1]]
+    if (RMSE < bestRMSE) {
+      bestRMSE <- RMSE
+      bestModel <- model
+    }
+  }
+  return (bestModel)
+}
+
+#Test
+bestModel <- evaluateModels(modelList, test_data, "excess_deaths")
+print(bestModel)
 predict(linearreg, test_data)
 
 rfPrediction <- predict(RFmodel, newdata = test_data)
+svmPrediction <- predict(SVMmodel, newdata = test_data)
+
  
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
-
-
-get_predicted_score <- function(model = RFmodel, week,gender,agegroup,deaths){
+test <- postResample(pred = svmPrediction, obs = test_data$excess_deaths)[1]
+### Prediction #---------------------------------------------
+get_predicted_score <- function(model = RFmodel, country, week,gender,agegroup,deaths){
     
     df <- 
       data.frame(
+        country = as.factor(country),
         week = as.factor(week),
         gender = as.factor(gender),
         agegroup = as.factor(agegroup),
         deaths = as.numeric(deaths)
       )
     
+    print(df)
+    return (predict(model,
+                    newdata = df))
+    #df <- totaldata
     
-    df <- totaldata
-    
-    data.frame(
-      scoring_date = as.Date(Sys.Date()),
-      prob = 
-        predict(
-          model, 
-          newdat = df,
-          type = "prob")$Default)
+    #data.frame(
+     # scoring_date = as.Date(Sys.Date()),
+     #prob = 
+     #   predict(
+      #    model, 
+       #   newdat = df,
+      #    type = "prob")$Default)
   }
+#Test prediction
+
+get_predicted_score(country = "UK",week = 17, gender = "F", agegroup = "85+", deaths = 5600)
+#SVM
+get_predicted_score(model = SVMmodel, country = "UK",week = 17, gender = "F", agegroup = "85+", deaths = 5600)
+
+
+
+# Save model -----------------------------------------
+save(bestModel, get_predicted_score, file = "test.Rda")
+load("test.Rda")
