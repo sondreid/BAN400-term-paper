@@ -93,7 +93,7 @@ ui <- fluidPage(
                ))
              ),
     
-    # Partners         
+    # Plot adjusted by table         
     tabPanel(title = "Table", 
              fluidRow(
                
@@ -105,6 +105,7 @@ ui <- fluidPage(
                column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
                column(6, plotlyOutput('ggplotTable', height = 500), style = "color:white; ")
              )),
+    # ML prediction
     tabPanel(title = "Prediction",
              
              fluidRow(
@@ -115,14 +116,25 @@ ui <- fluidPage(
              fluidRow(
                sidebarLayout(
                  sidebarPanel(
-                   textInput("Enter coutry", h3("Country"),
-                             value = "Enter..")
-                 ),
+                   textInput(inputId = "country", 
+                             label = h3("Country"),
+                             value = "France"),
+                   textInput(inputId = "gender", 
+                             label = h3("Gender"),
+                             value = "F"),
+                   textInput(inputId = "agegroup", h3("Agegroup"),
+                         value = "0-64"),
+            
+                   numericInput(inputId = "deaths", 
+                          h3("Deaths"),
+                          value = 0)
+                   ),
                mainPanel(
                  br(),
                  h3("Prediction"),
+                 textOutput("prediction_excess_deaths"),
                  br()
-               )
+               ),
              )
              )
              

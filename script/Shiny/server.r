@@ -19,6 +19,7 @@ library(formattable)
 library(DT)
 
 load(file = "data/totaldata.Rda")
+load(file = "data/MLModel.Rda")
 source("ui.r")
 server <- function(input, output) {
   
@@ -106,6 +107,15 @@ server <- function(input, output) {
     print(p)
     
   }, height=700)
+  
+  
+  # Predicted excess deaths in ML tab
+  output$prediction_excess_deaths <- renderText({
+    paste("Excess deaths based on input parameters", get_predicted_score(country = input$country,  
+                                                                         gender = input$gender, 
+                                                                         agegroup = input$agegroup, 
+                                                                         deaths = input$deaths))
+  })
   
 }
 

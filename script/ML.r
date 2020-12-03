@@ -35,7 +35,7 @@ aggregateAgegroup <- function() {
 }
  
 totaldata %<>% 
-  transform(week = as.factor(week),
+  transform(
             country = as.factor(country),
             year   = as.factor(year)) %>%
   select(country, gender, agegroup, deaths, excess_deaths)                  
@@ -59,7 +59,7 @@ cl <- makePSOCKcluster(detectCores())
 registerDoParallel(cl)
 
 #
-linnearreg <- train(excess_deaths ~ week,
+linnearreg <- train(excess_deaths ~ deaths,
                  data = training_data,
                  method = "lm")
 
@@ -149,12 +149,12 @@ get_predicted_score <- function(model = bestModel, country,gender,agegroup,death
   }
 #Test prediction
 
-get_predicted_score(country = "UK", gender = "F", agegroup = "85+", deaths = 5600)
-#SVM
-get_predicted_score(model = SVMmodel, country = "UK", gender = "F", agegroup = "85+", deaths = 5600)
+get_predicted_score(model = RFmodel, country = "France", gender = "F", agegroup = "85+", deaths = 5600)
+#Best model
+get_predicted_score(country = "France", gender = "F", agegroup = "85+", deaths = 5600)
 
 
 
 # Save model -----------------------------------------
-save(bestModel, get_predicted_score, file = "test.Rda")
+save(bestModel, get_predicted_score, file = "data/MLModel.Rda")
 load("test.Rda")
