@@ -22,23 +22,39 @@ load("Shiny/data/totaldata.Rda")
 
 
 #### Data selection --------------------------------------------
-aggregateAgegroup <- function() {
-  totaldata %<>% 
-    transform(week = as.factor(week),
-              country = as.factor(country),
-              year   = as.factor(year)) %>%
-    group_by(week, year, gender, country) %>% 
-    summarise(deaths = sum(deaths),
-      expected_deaths = sum(expected_deaths),
-      excess_deaths = sum(excess_deaths))
-
+aggregateColumn <- function(df = totaldata,
+                              column) {
+  #' Function that aggregates a column of an input dataframe by grouping all columns except the chosen column
+  #' @param df: input dataframe, per default totaldata
+  #' @param column: column to be aggregated
+  #' @return : a modified dataframe
+  columns <- c("week", "country", "gender", "agegroup")
+  columns %<>% setdiff(., column) 
+  print(columns)
+  df %<>% 
+    group_by_at(columns) %>% 
+    summarise(
+      deaths = sum(deaths),
+      excess_deaths = sum(excess_deaths)) %>% 
+    mutate(!!column := "All")
+  return (df)
 }
- 
+
+
 totaldata %<>% 
   transform(
             country = as.factor(country),
-            year   = as.factor(year)) %>%
-  select(country, gender, agegroup, deaths, excess_deaths)                  
+            year   = as.factor(year),
+            week = as.factor(week)) %>%
+  select(week, country, gender, agegroup, deaths, excess_deaths) %>%
+  rbind(., totaldata %>%  ## Add aggregate for gender and agegroup (deaths and excess deaths for all genders and agegroups for a week)
+          group_by(country, week) %>%
+          summarise(gender = "All", agegroup = "All", deaths = sum(deaths), excess_deaths = sum(excess_deaths))) %>%
+  rbind(., aggregateColumn(df = totaldata, "agegroup")) %>%
+  rbind(., aggregateColumn(df = totaldata, "gender")) %>%
+  select(-week)
+
+
                   
       
 intrain <- createDataPartition(y = totaldata$excess_deaths,
@@ -102,7 +118,7 @@ stopCluster(cl) #Stop cluster
 
 ### Evaluation -----------------------------------------------------------------------
 
-modelList <- list(SVMmodel, RFmodel)
+modelList <- list(SVMmodel, RFmodel, SVMRadialmodel)
 evaluateModels <- function(modelList, testData, feature) {
   #' Returns the best fitted model based on RMSE ( )
   #'@param modelList: list of potential models
@@ -127,16 +143,22 @@ predict(linearreg, test_data)
 rfPrediction <- predict(RFmodel, newdata = test_data)
 svmPrediction <- predict(SVMmodel, newdata = test_data)
 
+bestPred <- predict(bestModel, newdata = test_data)
  
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
 
 
 
-### Prediction #---------------------------------------------
-get_predicted_score <- function(model = bestModel, country,gender,agegroup,deaths){
+### Prediction ---------------------------------------------...
+predict_excess_deaths <- function(model = bestModel, country,gender,agegroup,deaths){
     #'
     #'Returns a prediction based on an input regression model and attributes of country, gender, agegroup and number of deaths
     #'As per default the bestModel is chosen
+    #'@param model: input ML model, the best Model determined by evaluateModels() per default
+    #'@param country: String, country name
+    #'@param gender: String, gender name
+    #'@param agegroup: String, interval of ages(predetermined agegroups)
+    #'@param deaths : Integer, number of deaths (per week for a given set of attributes)
     df <- 
       data.frame(
         country = as.factor(country),
@@ -149,12 +171,13 @@ get_predicted_score <- function(model = bestModel, country,gender,agegroup,death
   }
 #Test prediction
 
-get_predicted_score(model = RFmodel, country = "France", gender = "F", agegroup = "85+", deaths = 5600)
+predict_excess_deaths(model = RFmodel, country = "UK", gender = "All", agegroup = "All", deaths = 14276)
 #Best model
-get_predicted_score(country = "France", gender = "F", agegroup = "85+", deaths = 5600)
+predict_excess_deaths(country = "France", gender = "F", agegroup = "85+", deaths = 5600)
 
 
 
 # Save model -----------------------------------------
-save(bestModel, get_predicted_score, file = "data/MLModel.Rda")
-load("test.Rda")
+#'Save the model in a Rda file for quick loading into memory for use in other rscripts (such as the shiny application)
+save(bestModel, predict_excess_deaths, file = "Shiny/data/MLModel.Rda")
+
