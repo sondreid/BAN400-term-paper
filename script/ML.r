@@ -166,8 +166,8 @@ predict_excess_deaths <- function(model = bestModel, country,gender,agegroup,dea
         agegroup = as.factor(agegroup),
         deaths = as.numeric(deaths)
       )
-    return (predict(model,
-                    newdata = df))
+    return (as.integer(predict(model,
+                    newdata = df)))
   }
 #Test prediction
 
@@ -176,8 +176,9 @@ predict_excess_deaths(model = RFmodel, country = "UK", gender = "All", agegroup 
 predict_excess_deaths(country = "France", gender = "F", agegroup = "85+", deaths = 5600)
 
 
-
+MLdata <- totaldata
 # Save model -----------------------------------------
 #'Save the model in a Rda file for quick loading into memory for use in other rscripts (such as the shiny application)
-save(bestModel, predict_excess_deaths, file = "Shiny/data/MLModel.Rda")
+save(bestModel, MLdata, predict_excess_deaths, file = "Shiny/data/MLModel.Rda")
+
 

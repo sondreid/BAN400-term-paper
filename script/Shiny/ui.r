@@ -2,38 +2,32 @@ library(shiny)
 library(ggplot2)
 
 load("data/totaldata.Rda")
+load("data/MLmodel.Rda")
 
 data <- totaldata
+
 
 
 ui <- fluidPage(
   
   fluidRow(
-    column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "www/covid_19.png"))),
-    column(width = 10, align = "center", headerPanel(tags$h1("Covid-19")))
+    #column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "www/covid_19.png"))),
+    column(width = 10, align = "center", headerPanel(tags$h1("Covid-19 dashboard")))
   ),
   
   
   fluidRow(
-    column(width = 12, align = "center", tags$p("This is the story about", tags$em("Covid-19"), "in", tags$strong("Shiny"), "app.") )
+    column(width = 12, align = "center", tags$p("A dashboard of excess deaths statistics in the Covid-19 pandemic", tags$em("Covid-19"), "in", tags$strong("Shiny"), "app.") )
   ),
   
   tabsetPanel(
     tabPanel(title = "Main",
-             
-             tags$br(),
-             
-             fluidRow(
-               column(width = 3, tags$a(href = "https://sondreid.shinyapps.io/shiny/?fbclid=IwAR1ql4x9akYJ-kHedYXDVWtsnNnG8o7UrTIAS9IdjNoVj15aP9qleHOu4YM", tags$img(height = 50, width = 132, src = "shiny.png")),
-                      tags$a(href = "https://sondreid.shinyapps.io/shiny/?fbclid=IwAR1ql4x9akYJ-kHedYXDVWtsnNnG8o7UrTIAS9IdjNoVj15aP9qleHOu4YM", "Sondres App"),
-               )
-             ),
-             
-             tags$hr(),
+
+    
              
              sidebarLayout(
                sidebarPanel(
-                 
+                 tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
                  sliderInput(inputId = "week",
                              label = "Range of weeks",
                              min = min(data$week),
@@ -116,30 +110,40 @@ ui <- fluidPage(
              fluidRow(
                sidebarLayout(
                  sidebarPanel(
-                   textInput(inputId = "country", 
+                   selectInput(inputId = "country", 
                              label = h3("Country"),
-                             value = "France"),
-                   textInput(inputId = "gender", 
+                             choices = levels(MLdata$country),
+                             selected = "France"),
+                   selectInput(inputId = "gender", 
                              label = h3("Gender"),
-                             value = "F"),
-                   textInput(inputId = "agegroup", h3("Agegroup"),
-                         value = "0-64"),
+                             choices = levels(MLdata$gender),
+                             selected = "F"),
+                   selectInput(inputId = "agegroup", 
+                             label =h3("Agegroup"),
+                             choices = levels(MLdata$agegroup),
+                             selected = "0-64"),
             
                    numericInput(inputId = "deaths", 
-                          h3("Deaths"),
-                          value = 0)
+                                h3("Deaths"),
+                                value = 0)
                    ),
                mainPanel(
                  br(),
                  h3("Prediction"),
-                 textOutput("prediction_excess_deaths"),
-                 br()
+                 p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio."),
+                 p("We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
+                   model based is chosen based on its RMSE (Root-mean-square error)"),
+                 fluidRow(
+                   br(),
+                   h4(textOutput("prediction_excess_deaths"), style="color:white;background-color:gray;padding:10px"),
+                   br())
+
                ),
-             )
+              )
              )
              
              
-             )
+            )
   ),
 
 )
