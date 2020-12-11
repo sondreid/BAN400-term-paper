@@ -11,7 +11,7 @@ library(gbm)
 library(docstring)
 library(doParallel)
 library(randomForest)
-
+library(forecastML)
 
 "Loading data frames retrieved from standardisation.r"
 
@@ -51,7 +51,11 @@ totaldata %<>%
           group_by(country, week) %>%
           summarise(gender = "All", agegroup = "All", deaths = sum(deaths), excess_deaths = sum(excess_deaths))) %>%
   rbind(., aggregateColumn(df = totaldata, "agegroup")) %>%
-  rbind(., aggregateColumn(df = totaldata, "gender")) %>%
+  rbind(., aggregateColumn(df = totaldata, "gender"))
+
+forecastData <- totaldata # Store totaldata with week feature
+
+totaldata %<>% #Keep totaldata as ML prediction dataframe, but without week feature
   select(-week)
 
 
@@ -147,7 +151,59 @@ bestPred <- predict(bestModel, newdata = test_data)
  
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
 
+#### Forecast ----------------------------------------------------
 
+date_frequency <- "1 week"
+outcome_column <- 6
+
+
+forecast_intrain <- createDataPartition(y = totaldata$excess_deaths,
+                               p = 0.8,
+                               list = FALSE)
+
+forecast_train_data <- forecastData[forecast_intrain]
+forecast_test_data <-  forecastData[-forecast_intrain]
+forecast_data_list <- create_lagged_df(forecastData, 
+                                        type = "train", 
+                                        method = "direct", 
+                                        outcome_col = outcome_column, 
+                                        lookback = 1:15, 
+                                        horizons = 1:10,
+                                       #groups?
+                                        dynamic_features ="law")
+
+
+windows <- create_windows(lagged_df = forecast_train_data, 
+                          window_length = 0)
+
+model_function_2 <- function(data) {
+  #'
+  
+  outcome_names <- names(data)[outcome_column]
+  model_formula <- formula(paste0(outcome_names,  "~ ."))
+  
+  model <- randomForest::randomForest(formula = model_formula, data = data, ntree = 200)
+  return(model)
+}
+
+forecast_model <- forecastML::train_model(forecast_train_data, windows, model_name = "RF", 
+                                           model_function_2, use_future = FALSE)
+
+
+
+
+
+
+
+model_function <- function(df) {
+  x <- as.matrix(df[, -1, drop = FALSE])
+  print(x)
+  y <- as.matrix(df[, 1, drop = FALSE])
+  model <- glmnet::cv.glmnet(x, y)
+}
+testmodel <- model_function(data_train)
+
+forecast_model <- forecastML::train_model(forecast_train_data, windows, model_name = "LASSO", model_function = model_function)
 
 ### Prediction ---------------------------------------------...
 predict_excess_deaths <- function(model = bestModel, country,gender,agegroup,deaths){
