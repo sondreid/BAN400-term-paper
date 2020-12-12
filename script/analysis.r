@@ -184,7 +184,7 @@ plotfunction <- function(df,
   plot <- plot + 
     facet_wrap(~agegroup, nrow = 1) # Wraps number of agegroups on a single row 
   
-  ggsave(paste("../results/", filename))
+  ggsave(paste("../results/", filename, sep = ""))
   
   return (ggplotly(plot))           # ggplotly for interactivity
 }
@@ -205,7 +205,7 @@ plotter <- function(df, gender = c("M", "F"), country){
 
 "Stores created plots in pdf-file"
 plot_pdf <- function(filename, plot){
-  pdf(paste("../results/",filename), onefile = TRUE)
+  pdf(paste("../results/",filename, sep=""), onefile = TRUE)
   plotter(plot)
   dev.off()
 }
@@ -370,3 +370,4 @@ longTable <- function() {
 
 
 save(totaldata, file = "Shiny/data/totaldata.Rda")
+

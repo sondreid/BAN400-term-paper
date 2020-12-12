@@ -136,12 +136,12 @@ custom_clean_data_2020 <- function(df,
 #### Data Norway ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns"
 data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx", 
-                          range = "Dode1!a4:X1594")
+                          range = "Dode1!a4:AA1594")
 
 
 "Changing the empty columns by replicating gender names (1) and agegroups (2)"
-data_norway  <- changeNonRecurringRow(data_norway, 1, 53) %>% # For gender
-             changeNonRecurringRow(., 2, 53) # For agegroups
+data_norway  <- changeNonRecurringRow(data_norway, 2, 53) %>% # For gender
+             changeNonRecurringRow(., 4, 53) # For agegroups
 
 
 "Manipulating the norway's data frame.
@@ -152,9 +152,9 @@ data_norway  %<>%
   pivot_longer(cols = starts_with("20"),   # Check description for clean_data()
                names_to = "year",
                values_to = "deaths") %>% 
-  rename(gender = "...1",
-         agegroup =  "...2", 
-         values = "...3") %>% 
+  rename(gender = "...2",
+         agegroup =  "...4", 
+         values = "...6") %>% 
   mutate(week =   sapply(strsplit(values, " "), `[`, 2)) %>%     
   filter(!is.na(gender), 
          year >= 2014, 
@@ -222,6 +222,8 @@ data_sweden <- rbind(data_sweden_2015_2019,
          deaths, 
          country) 
 
+rm(data_sweden_2015_2019)
+rm(data_sweden_2020)
 
 #### Data Denmark --------------------------------------------------------------
 "Reads csv-file with read_delim() and separete it by ';', alternative:
