@@ -19,7 +19,8 @@ library(formattable)
 library(DT)
 
 load(file = "data/totaldata.Rda")
-source("ui.r")
+load(file = "data/MLModel.Rda")
+source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
   
   longTable_data <- totaldata %>%
@@ -39,7 +40,7 @@ server <- function(input, output) {
               options = list(pageLength = 5, autoWidth = 5, lengthMenu = 5, scrollX = T,
                              initComplete = JS(
                                "function(settings, json) {",
-                               "$(this.api().table().header()).css({'background-color': '#517fb9', 'color': '#fff'});",
+                               "$(this.api().table().header()).css({'background-color': '#808080', 'color': '#fff'});",
                                "}")),
               class = 'cell-border stripe')
     
@@ -103,11 +104,21 @@ server <- function(input, output) {
       p <- p + geom_smooth(data = data(), 
                            aes(x = week, y = expected_deaths))
     
-    print(p)
+    p
     
   }, height=700)
   
+  
+  # Predicted excess deaths in ML tab
+  output$prediction_excess_deaths <- renderText({
+    paste("Excess deaths based on input parameters", predict_excess_deaths(country = input$country,  
+                                                                         gender = input$gender, 
+                                                                         agegroup = input$agegroup, 
+                                                                         deaths = input$deaths))
+  })
+  
 }
+
 
 # Remove comment for live test
 shinyApp(ui, server)
