@@ -162,8 +162,8 @@ forecast_intrain <- createDataPartition(y = totaldata$excess_deaths,
                                p = 0.8,
                                list = FALSE)
 
-forecast_train_data <- forecastData[forecast_intrain]
-forecast_test_data <-  forecastData[-forecast_intrain]
+forecast_train_data <- forecastData[forecast_intrain,]
+forecast_test_data <-  forecastData[-forecast_intrain,]
 forecast_data_list <- create_lagged_df(forecastData, 
                                         type = "train", 
                                         method = "direct", 
@@ -175,17 +175,17 @@ forecast_data_list <- create_lagged_df(forecastData,
 
 
 windows <- create_windows(lagged_df = forecast_data_list, 
-                          window_length = 1)
+                          window_length = 0)
 
 model_function <- function(data) {
   #'
   
-  outcome_names <- names(data)[outcome_column]
+  #outcome_names <- names(data)[outcome_column]
   #print(paste("outcome names", outcome_names))
-  model_formula <- formula(paste0(outcome_names,  "~ ."))
+  #model_formula <- formula(paste0(outcome_names,  "~ ."))
  # print(paste("formula:", model_formula))
   
-  model <- randomForest::randomForest(model_formula, data = data, ntree = 200)
+  model <- randomForest::randomForest(excess_deaths ~., data = data, ntree = 10)
   return(model)
 }
 
@@ -204,6 +204,25 @@ pred_function <- function(model, data_features) {
 data_results <- predict(forecast_model,
                         prediction_function = list(pred_function),
                         data = forecast_data_list)
+residuals <- residuals(data_results)
+
+data_forecast <- create_lagged_df(forecastData, 
+                                       type = "forecast", 
+                                       method = "direct", 
+                                       outcome_col = outcome_column, 
+                                       lookback = 1:15, 
+                                       frequency = "week",
+                                       horizons = 1:10)
+data_forecasts <- predict(forecast_model, prediction_function = list(pred_function), data = data_forecast) 
+
+#Combine results
+data_forecasts <- forecastML::combine_forecasts(data_forecasts)
+data_forecasts <- forecastML::calculate_intervals(data_forecasts, residuals, 
+                                                  levels = seq(.5, .95, .05), times = 200)
+
+data_forecasts$excess_deaths_pred <- round(data_forecasts$excess_deaths_pred, 0)
+DT::datatable(head(data_forecasts, 10), options = list(scrollX = TRUE))
+plot(data_forecasts, data_seatbelts[-(1:160), ], (1:nrow(data_seatbelts))[-(1:160)], interval_alpha = seq(.1, .2, length.out = 10))
 
 
 
