@@ -335,7 +335,7 @@ data_uk_2019 <- read_xls("../datasett/UK/UK_2019.xls",
 
 data_uk_2020 <- read_xlsx("../datasett/UK/UK_2020.xlsx", 
                           sheet = "Weekly figures 2020",
-                          range = "A4:AI85") %>% 
+                          range = "A4:BC85") %>% 
   unite(., x, 1:2, na.rm = TRUE) %>%
   custom_clean_data_2020(., 
                          2020,
