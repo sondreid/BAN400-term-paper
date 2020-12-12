@@ -15,7 +15,7 @@ library(forecastML)
 
 "Loading data frames retrieved from standardisation.r"
 
-load("../datasett/processed_data_all_countries.Rda")
+#load("../datasett/processed_data_all_countries.Rda")
 
 "load totaldata"
 load("Shiny/data/totaldata.Rda")
@@ -152,7 +152,8 @@ bestPred <- predict(bestModel, newdata = test_data)
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
 
 #### Forecast ----------------------------------------------------
-
+cl <- makePSOCKcluster(detectCores())
+registerDoParallel(cl)
 date_frequency <- "1 week"
 outcome_column <- 6
 
@@ -173,21 +174,40 @@ forecast_data_list <- create_lagged_df(forecastData,
                                         dynamic_features ="law")
 
 
-windows <- create_windows(lagged_df = forecast_train_data, 
-                          window_length = 0)
+windows <- create_windows(lagged_df = forecast_data_list, 
+                          window_length = 1)
 
-model_function_2 <- function(data) {
+model_function <- function(data) {
   #'
   
   outcome_names <- names(data)[outcome_column]
+  #print(paste("outcome names", outcome_names))
   model_formula <- formula(paste0(outcome_names,  "~ ."))
+ # print(paste("formula:", model_formula))
   
-  model <- randomForest::randomForest(formula = model_formula, data = data, ntree = 200)
+  model <- randomForest::randomForest(model_formula, data = data, ntree = 200)
   return(model)
 }
 
-forecast_model <- forecastML::train_model(forecast_train_data, windows, model_name = "RF", 
-                                           model_function_2, use_future = FALSE)
+forecast_model <- forecastML::train_model(forecast_data_list, windows, model_name = "RF", 
+                                           model_function, use_future = FALSE)
+
+#pred <- predict(forecast_model, newdata = forecast_test_data)
+
+pred_function <- function(model, data_features) {
+  
+  data_pred <- data.frame("y_pred" = predict(model, data_features))
+  return(data_pred)
+}
+
+
+data_results <- predict(forecast_model,
+                        prediction_function = list(pred_function),
+                        data = forecast_data_list)
+
+
+
+stopCluster(cl) #Stop cluster 
 
 
 
