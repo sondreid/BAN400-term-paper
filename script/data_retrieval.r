@@ -205,8 +205,8 @@ data_sweden_2020 <- data_sweden %>%
          gender = sapply(strsplit(values ," "), `[`, 1),
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>% 
   select(-"values") %>% 
-  rename(week = "Vecka") %>%
-  filter(week <= 33)          # Because of zero deaths recording after week 33
+  rename(week = "Vecka") %>% 
+  filter(deaths != 0.0) # In order to remove zero-deaths-week
      
 
 "Combines data frames to a single data frame, mutates agegroup column to contain
