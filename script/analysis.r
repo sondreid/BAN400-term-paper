@@ -92,15 +92,16 @@ weeksin2020 <- function(df) {
                  unique()))
 }
 
-
+minimalweeks <- 52 # Store the lowest common week for which we have data in the current year (2020)
 
 "Function that aggregates deaths (as mean of years prior to 2020) as expected 
 data, and adds a column for excess deaths to the existing dataframe"
 addExpectedDeaths <- function(df) {
-  
+  weeks2020 <- weeksin2020(df)
+  if (weeks2020 <  minimalweeks) assign("minimalweeks", weeks2020,envir = .GlobalEnv) # Change global variable minimalweeks
   expected_deaths <- df %>% 
     filter(year < 2020,
-           week <= weeksin2020(df)) %>%  
+           week <= weeks2020) %>%  
     group_by(gender, 
              agegroup, 
              week) %>% 
@@ -134,6 +135,7 @@ assembleAllData <- function(dfVector = c("data_norway",
     totaldata <- rbind(totaldata, 
                        addExpectedDeaths(eval(as.name(dfVector[i]))))
   }
+  totaldata %<>% filter(week <= minimalweeks)
   return (totaldata)
 }
 
@@ -353,7 +355,8 @@ shortTable <- function() {
 "Function that returns a sortable table which contains weekly deaths, expected 
 deaths and excess deaths according to agegroup and gender"
 longTable <- function() {
-  outputtable <- datatable(longTable_data, 
+  outputtable <- datatable(totaldata %>%
+                             select(-year), 
                            colnames = c("Gender", 
                                         "Agegroup", 
                                         "Week", 

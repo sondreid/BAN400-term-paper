@@ -237,11 +237,11 @@ data_denmark <- read_delim("../datasett/Denmark/danmark_statbank_2013-2020.csv",
 "Manipulates the data frame by selecting useful columns with [], 
 and mutatating gender column in to standardized gender name."
 data_denmark <- 
-  data_denmark[(25:70),-1] %>%
+  data_denmark[-1,] %>%
   rename(gender = " _1",
          agegroup = " _2") %>%
   mutate(gender = substr(gender, 1, 1)) %>%
-  changeNonRecurringRow(., 1, 23) # Fills non recurring rows with given genders 
+  changeNonRecurringRow(., 2, 22) # Fills non recurring rows with given genders 
 
 
 
