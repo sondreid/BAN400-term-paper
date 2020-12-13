@@ -20,6 +20,9 @@ download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subj
 download.file(url = "https://www.ssb.no/statbank/sq/10044673",
               destfile = "../datasett/Norway/norway_ssb.xlsx")
 
+download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek48202007122020155900.xlsx",
+              destfile = "../datasett/UK/UK_2020.xlsx")
+
 
 
 
