@@ -11,9 +11,7 @@ library(types)
 library(lubridate)
 library(janitor)  
 
-
-
-# Download file from websites every time data_retrieval.r is called
+#### Download last updated version of data -------------------------------------
 download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/pong/tables-and-graphs/preliminary-statistics-on-deaths/",
               destfile = "../datasett/Sweden/sweden_scb.xlsx")
 
@@ -23,6 +21,9 @@ download.file(url = "https://www.ssb.no/statbank/sq/10044673",
 download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek48202007122020155900.xlsx",
               destfile = "../datasett/UK/UK_2020.xlsx")
 
+#download.file(url = "", destfile = "../datasett/France/france_2020.csv")
+
+#download.file(url = "", destfile = "../datasett/Denmark/danmark_statbank_2013-2020.xlsx")
 
 
 
