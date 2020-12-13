@@ -11,6 +11,21 @@ library(types)
 library(lubridate)
 library(janitor)  
 
+#### Download last updated version of data -------------------------------------
+download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/pong/tables-and-graphs/preliminary-statistics-on-deaths/",
+              destfile = "../datasett/Sweden/sweden_scb.xlsx")
+
+download.file(url = "https://www.ssb.no/statbank/sq/10044673",
+              destfile = "../datasett/Norway/norway_ssb.xlsx")
+
+download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek48202007122020155900.xlsx",
+              destfile = "../datasett/UK/UK_2020.xlsx")
+
+#download.file(url = "", destfile = "../datasett/France/france_2020.csv")
+
+#download.file(url = "", destfile = "../datasett/Denmark/danmark_statbank_2013-2020.xlsx")
+
+
 
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
@@ -140,8 +155,8 @@ data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx",
 
 
 "Changing the empty columns by replicating gender names (1) and agegroups (2)"
-data_norway  <- changeNonRecurringRow(data_norway, 2, 53) %>% # For gender
-             changeNonRecurringRow(., 4, 53) # For agegroups
+data_norway  <- changeNonRecurringRow(data_norway, 1, 53) %>% # For gender
+             changeNonRecurringRow(., 2, 53) # For agegroups
 
 
 "Manipulating the norway's data frame.
@@ -152,9 +167,9 @@ data_norway  %<>%
   pivot_longer(cols = starts_with("20"),   # Check description for clean_data()
                names_to = "year",
                values_to = "deaths") %>% 
-  rename(gender = "...2",
-         agegroup =  "...4", 
-         values = "...6") %>% 
+  rename(gender = "...1",
+         agegroup =  "...2", 
+         values = "...3") %>% 
   mutate(week =   sapply(strsplit(values, " "), `[`, 2)) %>%     
   filter(!is.na(gender), 
          year >= 2014, 
@@ -171,10 +186,10 @@ data_norway  %<>%
 
 #### Data Sweden ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns, and selected sheet"
-data_sweden <- 
-  read_excel("../datasett/Sweden/sweden_scb.xlsx", 
-             sheet = "Tabell 7", 
-             range = "Tabell 7!a9:s62")
+ data_sweden <- 
+   read_excel("../datasett/Sweden/sweden_scb.xlsx", 
+              sheet = "Tabell 7", 
+              range = "Tabell 7!a9:s62")
 
 
 "Creates a new data frame containing data from 2015-2019.
