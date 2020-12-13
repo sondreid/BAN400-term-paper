@@ -24,7 +24,7 @@ ui <- fluidPage(
     tabPanel(title = "Main",
              
              br(),
-             p("Try to make your prefered plots" ,style="text-align:justify;color:white;background-color:gray;padding:15px;border-radius:10px"),
+             p("Try to make your prefered plotoutput" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -92,27 +92,38 @@ ui <- fluidPage(
     
     # Plot adjusted by table         
     tabPanel(title = "Table", 
-             fluidRow(
-               
-               br(),
-               p("By filtering data in the table, the plot will adjust" ,style="text-align:justify;color:white;background-color:gray;padding:15px;border-radius:10px"),
-               br()),
+             br(),
+             p("By filtering data in the table, the plot will adjust" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
              
-             fluidRow(  
-               column(6,DT::dataTableOutput("tableALL"), style = "color:white; "),
-               column(6, plotlyOutput('ggplotTable', height = 500), style = "color:white; ")
-             )),
+             sidebarLayout(
+               sidebarPanel(
+                 tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
+               
+                 DT::dataTableOutput("tableALL"),
+                 
+                 width = 7
+               ),
+             
+               mainPanel(
+                 plotlyOutput('ggplotTable', height = 500),
+                 
+                 width = 5
+               
+               ))
+             
+               
+             ),
     # ML prediction
     tabPanel(title = "Prediction",
-             
-             fluidRow(
-               br(),
-               p("Prediction by machine learning", style="text-align:justify;color:white;background-color:gray;padding:15px;border-radius:10px"),
-               br()),
-             
-             fluidRow(
-               sidebarLayout(
+             br(),
+             p("Prediction by machine learning", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
+          
+             sidebarLayout(
                  sidebarPanel(
+                   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
+                   
                    selectInput(inputId = "country", 
                              label = h3("Country"),
                              choices = levels(MLdata$country),
@@ -133,20 +144,20 @@ ui <- fluidPage(
                mainPanel(
                  br(),
                  h3("Prediction"),
-                 p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio."),
+                 p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n"),
                  p("We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
                    model based is chosen based on its RMSE (Root-mean-square error)"),
-                 fluidRow(
-                   br(),
-                   h4(textOutput("prediction_excess_deaths"), style="color:white;background-color:gray;padding:10px"),
-                   br())
+                 br(),
+                 h4("Excess deaths based on input parameters:", style="text-align:center"),
+                 h3(textOutput("prediction_excess_deaths"), style="text-align:center;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+                 br()
 
                ),
               )
              )
              
              
-            )
+            
   ),
 
 )
