@@ -104,7 +104,7 @@ server <- function(input, output) {
       p <- p + geom_smooth(data = data(), 
                            aes(x = week, y = expected_deaths))
     
-    p
+    ggplotly(p)
     
   }, height=700)
   
@@ -121,6 +121,6 @@ server <- function(input, output) {
 
 
 # Remove comment for live test
-shinyApp(ui, server)
+#shinyApp(ui, server)
 
 

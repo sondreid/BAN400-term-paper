@@ -22,9 +22,6 @@ ui <- fluidPage(
   
   tabsetPanel(
     tabPanel(title = "Main",
-
-    
-             
              sidebarLayout(
                sidebarPanel(
                  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
@@ -83,7 +80,7 @@ ui <- fluidPage(
                 
                ),
                mainPanel(
-                 plotOutput('plot')
+                 plotlyOutput('plot') %>% layout(height = 200, width = 200)
                ))
              ),
     
