@@ -80,7 +80,7 @@ server <- function(input, output) {
     totaldata[totaldata$week >= input$week[1] & totaldata$week <= input$week[2] & totaldata$country %in% input$countries,]
   })
   #' Plot at page 1
-  output$plot <- renderPlot({
+  output$plot <- renderPlotly({
     
     p <- ggplot(data(), aes_string(x=input$x, y=input$y))
     
@@ -103,10 +103,9 @@ server <- function(input, output) {
     if (input$expected)
       p <- p + geom_smooth(data = data(), 
                            aes(x = week, y = expected_deaths))
-    
     ggplotly(p)
     
-  }, height=700)
+  })
   
   
   # Predicted excess deaths in ML tab

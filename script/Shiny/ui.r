@@ -80,7 +80,8 @@ ui <- fluidPage(
                 
                ),
                mainPanel(
-                 plotlyOutput('plot') %>% layout(height = 200, width = 200)
+                 plotlyOutput('plot', height = 800)
+                  
                ))
              ),
     
