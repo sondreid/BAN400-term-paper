@@ -118,7 +118,7 @@ print(RFmodel)
 print(SVMmodel)
 print(SVMRadialmodel)
 
-stopCluster(cl) #Stop cluster 
+
 
 ### Evaluation -----------------------------------------------------------------------
 
@@ -152,8 +152,7 @@ bestPred <- predict(bestModel, newdata = test_data)
 postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
 
 #### Forecast ----------------------------------------------------
-cl <- makePSOCKcluster(detectCores())
-registerDoParallel(cl)
+
 date_frequency <- "1 week"
 outcome_column <- 6
 
@@ -185,26 +184,19 @@ model_function <- function(data) {
   #model_formula <- formula(paste0(outcome_names,  "~ ."))
  # print(paste("formula:", model_formula))
   
-  model <- randomForest::randomForest(excess_deaths ~., data = data, ntree = 10)
+  model <- randomForest::randomForest(excess_deaths ~., data = data, ntree = 200)
   return(model)
 }
 
 forecast_model <- forecastML::train_model(forecast_data_list, windows, model_name = "RF", 
                                            model_function, use_future = FALSE)
 
-#pred <- predict(forecast_model, newdata = forecast_test_data)
 
 pred_function <- function(model, data_features) {
-  
   data_pred <- data.frame("y_pred" = predict(model, data_features))
   return(data_pred)
 }
 
-
-data_results <- predict(forecast_model,
-                        prediction_function = list(pred_function),
-                        data = forecast_data_list)
-residuals <- residuals(data_results)
 
 data_forecast <- create_lagged_df(forecastData, 
                                        type = "forecast", 
@@ -213,7 +205,9 @@ data_forecast <- create_lagged_df(forecastData,
                                        lookback = 1:15, 
                                        frequency = "week",
                                        horizons = 1:10)
-data_forecasts <- predict(forecast_model, prediction_function = list(pred_function), data = data_forecast) 
+data_forecasts <- predict(forecast_model, 
+                          prediction_function =list(pred_function),
+                          data = data_forecast) 
 
 #Combine results
 data_forecasts <- forecastML::combine_forecasts(data_forecasts)
@@ -222,8 +216,10 @@ data_forecasts <- forecastML::calculate_intervals(data_forecasts, residuals,
 
 data_forecasts$excess_deaths_pred <- round(data_forecasts$excess_deaths_pred, 0)
 DT::datatable(head(data_forecasts, 10), options = list(scrollX = TRUE))
-plot(data_forecasts, data_seatbelts[-(1:160), ], (1:nrow(data_seatbelts))[-(1:160)], interval_alpha = seq(.1, .2, length.out = 10))
 
+
+plot(data_forecasts, forecastData[-(1:100), ], (1:nrow(forecastData))[-(1:100)])
+plot(data_forecasts)
 
 
 stopCluster(cl) #Stop cluster 
@@ -231,18 +227,6 @@ stopCluster(cl) #Stop cluster
 
 
 
-
-
-
-model_function <- function(df) {
-  x <- as.matrix(df[, -1, drop = FALSE])
-  print(x)
-  y <- as.matrix(df[, 1, drop = FALSE])
-  model <- glmnet::cv.glmnet(x, y)
-}
-testmodel <- model_function(data_train)
-
-forecast_model <- forecastML::train_model(forecast_train_data, windows, model_name = "LASSO", model_function = model_function)
 
 ### Prediction ---------------------------------------------...
 predict_excess_deaths <- function(model = bestModel, country,gender,agegroup,deaths){
