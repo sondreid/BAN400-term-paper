@@ -17,6 +17,7 @@ library(gt)
 library(scales)       
 library(formattable)  
 library(DT)
+library(magrittr)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
@@ -82,7 +83,7 @@ server <- function(input, output) {
   #' Plot at page 1
   output$plot <- renderPlotly({
     
-    p <- ggplot(data(), aes_string(x=input$x, y=input$y))
+    p <- ggplot(data(), aes_string(x="week", y=input$y))
     
     if (input$color != 'None')
       p <- p + aes_string(color=input$color)
@@ -91,8 +92,8 @@ server <- function(input, output) {
     if (facets != '. ~ .')
       p <- p + facet_grid(facets)
     
-    if (input$jitter)
-      p <- p + geom_jitter()
+    #if (input$jitter)
+     # p <- p + geom_jitter()
     
     if (input$smooth)
       p <- p + geom_smooth()
@@ -106,7 +107,6 @@ server <- function(input, output) {
     ggplotly(p)
     
   })
-  
   
   # Predicted excess deaths in ML tab
   output$prediction_excess_deaths <- renderText({
