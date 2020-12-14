@@ -22,7 +22,6 @@ server <- function(input, output) {
                                "}")),
               class = 'cell-border stripe')
     
-    #longTable(5, TRUE, c(5, 10, 15, 20, 50, 100, 200, 500))}
   })
   
   # Plot corresponding to datatable
@@ -91,6 +90,9 @@ server <- function(input, output) {
                                 gender = input$gender, 
                                 agegroup = input$agegroup, 
                                 deaths = input$deaths))
+  })
+  output$forecast_plot <- renderPlotly ({
+    generate_forecast_plot(countryname = input$countryname)
   })
   output$shortable <- renderFormattable({shortTable()})
   
