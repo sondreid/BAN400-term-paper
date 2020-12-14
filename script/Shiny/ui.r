@@ -1,6 +1,6 @@
 ######################### UI script for shiny app #################################
 
-## Libaries -------------
+## Libraries -------------
 library(shiny)
 library(ggplot2)
 library(rsconnect)
@@ -183,6 +183,7 @@ ui <- fluidPage(
              
                
              ),
+    
     # ML prediction
     tabPanel(title = "Prediction",
              br(),
@@ -222,7 +223,27 @@ ui <- fluidPage(
 
                ),
               )
-             )
+             ),
+    
+    tabPanel(title = "Forecast",
+             
+             br(),
+             p("Forcast", 
+               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
+             
+             sidebarLayout(
+               sidebarPanel(
+                 p("Sidepanel")
+               ),
+               mainPanel(
+                 p("Mainpanel")
+               )
+             ),
+             p("Something",
+               style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px")
+             
+    )
   
     
     
