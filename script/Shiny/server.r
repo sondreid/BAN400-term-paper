@@ -92,6 +92,9 @@ server <- function(input, output) {
                                 agegroup = input$agegroup, 
                                 deaths = input$deaths))
   })
+  output$forecast_plot <- renderPlotly ({
+    generate_forecast_plot(countryname = input$countryname)
+  })
   output$shortable <- renderFormattable({shortTable()})
   
 }

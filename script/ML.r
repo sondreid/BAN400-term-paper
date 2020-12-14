@@ -17,7 +17,6 @@ library(forecastML)
 
 "Loading data frames retrieved from standardisation.r"
 
-#load("../datasett/processed_data_all_countries.Rda")
 
 "load totaldata"
 load("Shiny/data/totaldata.Rda")
@@ -103,22 +102,16 @@ SVMRadialmodel <- train(excess_deaths ~.,
                   metric = "RMSE",
                   trcontrol = control,
                   tunelength = 4)
-GBMModel <-       train(excess_deaths~.,
-                        data = training_data,
-                        method = "gbm",
-                        trcontrol = control,
-                        verbose =0)
 
-
-GBMModel <- gbm(
-  formula = excess_deaths~.,
-  distribution = "gaussian",
-  data = training_data,
-  n.trees = 10000,
-  interaction.depth = 1,
-  shrinkage = 0.001,
-  cv.folds = 5,
-  verbose = FALSE
+GBMModel <-      gbm(
+                 formula = excess_deaths~.,
+                 distribution = "gaussian",
+                 data = training_data,
+                 n.trees = 10000,
+                 interaction.depth = 1,
+                 shrinkage = 0.001,
+                 cv.folds = 5,
+                 verbose = FALSE
 ) 
 
 ### Evaluation -----------------------------------------------------------------------
