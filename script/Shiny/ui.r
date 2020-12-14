@@ -22,18 +22,7 @@ library(DT)
 library(magrittr)
 library(caret)
 library(randomForest)
-
-
-
-library(caret)
-library(dplyr)
-library(magrittr)
 library(gbm)
-library(docstring)
-library(ggplot2)
-library(doParallel)
-library(randomForest)
-library(plotly)
 library(forecastML)
 
 
@@ -79,7 +68,9 @@ ui <- fluidPage(
                )
              ),
              p("The data sets used in this analysis are gathered from a statistics bureaus of five european countries.", br(), 
-               "The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19.", br(),br(),
+               "The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19.
+               The goal of this dashboard is to give a precise as possible view of the state of the excess mortality observed in our selection of countries.
+               We note that excess mortality is not to be confused with actual deaths caused by Covid-19.", br(),br(),
                " The sources of the data sets are as follows:",br(), br(),
                "UK:     https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths",br(),
                "France: https://www.insee.fr/en/statistiques/4493808?sommaire=4493845", br(),
@@ -193,14 +184,14 @@ ui <- fluidPage(
                  width = 5
                  
                ))
-             
-             
+      
     ),
     
     # ML prediction
     tabPanel(title = "Prediction",
              br(),
-             p("Prediction by machine learning", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             p("Prediction by machine learning",
+               style="text-align:center;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -225,7 +216,7 @@ ui <- fluidPage(
                               value = 0)
                ),
                mainPanel(
-                 h3("Prediction", style="text-align:center"),
+
                  p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n", br(),
                    "We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
                    model based is chosen based on its RMSE (Root-mean-square error)",style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
@@ -239,10 +230,9 @@ ui <- fluidPage(
     ),
     
     tabPanel(title = "Forecast",
-             
              br(),
-             p("Forcast", 
-               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             p("10 week forecast by forecastML", 
+               style="text-align:center;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -253,19 +243,16 @@ ui <- fluidPage(
                              label = h3("Country"),
                              choices = levels(MLdata$country),
                              selected = "Norway")
-
                ),
                mainPanel(
-                 p("Mainpanel"),
+                 p("We train a model based on the forecastML cran package.
+                   A random forest model is used to predict the number of excess deaths for a horizon of 10 weeks",
+                   style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
                  plotlyOutput("forecast_plot")
                )
-             ),
-             p("Something",
-               style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px")
+             )
              
     )
-    
-    
     
   )
   

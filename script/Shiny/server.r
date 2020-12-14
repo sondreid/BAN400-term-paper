@@ -22,7 +22,6 @@ server <- function(input, output) {
                                "}")),
               class = 'cell-border stripe')
     
-    #longTable(5, TRUE, c(5, 10, 15, 20, 50, 100, 200, 500))}
   })
   
   # Plot corresponding to datatable
