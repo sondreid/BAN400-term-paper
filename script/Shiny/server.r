@@ -116,11 +116,12 @@ server <- function(input, output) {
                                 agegroup = input$agegroup, 
                                 deaths = input$deaths))
   })
+  output$shortable <- renderFormattable({shortTable()})
   
 }
 
 
 # Remove comment for live test
-#shinyApp(ui, server)
+shinyApp(ui, server)
 
 

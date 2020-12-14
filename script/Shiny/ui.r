@@ -1,6 +1,7 @@
 library(shiny)
 library(ggplot2)
 library(plotly)
+library("formattable")
 
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
@@ -167,8 +168,9 @@ ui <- fluidPage(
              br(),
              
              sidebarLayout(
+               sidebarPanel(),
                mainPanel(
-                 shortTable()
+                 h3(formattableOutput("shortable"))
                ),
              )
     )
