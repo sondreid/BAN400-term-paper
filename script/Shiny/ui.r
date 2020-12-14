@@ -2,6 +2,7 @@ library(shiny)
 library(ggplot2)
 library(plotly)
 library(formattable)
+library(caret)
 
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
@@ -33,15 +34,6 @@ ui <- fluidPage(
              br(),
              p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              
-             p("The data sets used in this analysis are gathered from a statistics bureaus of five european countries.", br(), 
-               "The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19.", br(),br(),
-               " The sources of the data sets are as follows:",br(), br(),
-               "UK:     https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths",br(),
-               "France: https://www.insee.fr/en/statistiques/4493808?sommaire=4493845", br(),
-               "Denmark: https://www.statbank.dk/dodc2", br(),
-               "Sweden: https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/", br(),
-               "Norway: https://www.ssb.no/statbank/table/07995/",
-              style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -52,7 +44,18 @@ ui <- fluidPage(
                mainPanel(
                  width = 0
                )
-             )),
+             ),
+             p("The data sets used in this analysis are gathered from a statistics bureaus of five european countries.", br(), 
+               "The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19.", br(),br(),
+               " The sources of the data sets are as follows:",br(), br(),
+               "UK:     https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths",br(),
+               "France: https://www.insee.fr/en/statistiques/4493808?sommaire=4493845", br(),
+               "Denmark: https://www.statbank.dk/dodc2", br(),
+               "Sweden: https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/", br(),
+               "Norway: https://www.ssb.no/statbank/table/07995/",
+               style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px")
+             
+             ),
     
     tabPanel(title = "Interactive Plot",
              
