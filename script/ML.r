@@ -174,10 +174,7 @@ pred_function <- function(model, data_features) {
   data_pred <- data.frame("y_pred" = predict(model, data_features))
   return(data_pred)
 }
-train_model_all_countries <- function() {
-  #' Train model for all countries
-  
-}
+
 
 train_model_country <- function(countryname) {
   df <- forecastData %>%
@@ -219,7 +216,7 @@ forecast_country <- function(df = forecastData, countryname) {
   #'
   #'@param df: dataframe with all country data
   #'@param countryname: String name of country
-  latestweek <- tail(df[order(df$week),]$week, n =  1) -1
+  latestweek <- tail(df[order(df$week),]$week, n =  1)
   print(paste("latest week", latestweek))
   country_forecast <- train_model_country(countryname)
   country_forecast %<>% 
@@ -240,10 +237,24 @@ forecast_country <- function(df = forecastData, countryname) {
 
 }
 
-test <- generate_plot(forecastData, "France")
 
 
-generate_plot <- function(df, hor) 
+
+generate_forecast_plot <- function(countryname) {
+  df <- forecast_country(countryname = "France")
+  plot <- df %>%
+    ggplot() +
+    geom_smooth(aes(x = week,
+                    y = excess_deaths)) +
+    labs(x = "Weeks", y = "Excess deaths") +
+    theme(plot.background=element_rect()) +
+    ggtitle(paste(countryname, "estimated and forecasted excess deaths"))
+  ggplotly(plot)
+}
+
+generate_forecast_plot(countryname = "France")
+
+
 
 forecast_data_list <- create_lagged_df(forecastData, 
                                         type = "train", 
