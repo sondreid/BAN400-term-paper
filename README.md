@@ -14,16 +14,17 @@ the standard format file, and performs necessary operations to standardise each 
 These dataframes are then passed to analysis
 
 Analysis:
-
+The analysis script compiles all country data into a joint dataframe 'totaldata'. The script provides the basis use of the data compiled, like signficance tests, tables and tests.
+Finally the script saves our joint dataframe to be used in ML, server and ui scripts. 
 
 ML:
+The ML script features the training and evaluation of machine learning models used for prediction and forecasting in the Shiny dashboard.
 
 Server:
+The server script handles server-side logic and calls on relevant functions found in the stored Rda files located in the data folder
 
 UI:
-
-
-
+The ui script handles the aesthetics of the shiny dashboards. The dashboard layout is a tab-based interface.
 
 
 

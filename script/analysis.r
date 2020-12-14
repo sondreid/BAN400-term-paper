@@ -22,7 +22,7 @@ library(DT)
 library(magrittr)
 
 "In case of sourcing the retrieval file directly to this file"
-#source("standardisation.r")
+source("standardisation.r")
 
 
 "Loading data frames retrieved from standardisation.r"

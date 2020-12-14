@@ -60,7 +60,6 @@ totaldata %<>% #Keep totaldata as ML prediction dataframe, but without week feat
 
 
                   
-      
 intrain <- createDataPartition(y = totaldata$excess_deaths,
                                     p = 0.8,
                                     list = FALSE)
@@ -68,7 +67,6 @@ intrain <- createDataPartition(y = totaldata$excess_deaths,
 
 training_data <- totaldata[intrain,] #%>% select(excess_deaths,week)
 test_data     <- totaldata[-intrain,]
-
 
 
 
@@ -122,6 +120,8 @@ evaluateModels <- function(modelList, testData, feature) {
   #' Starts with a best RMSE of infinity, and stores iteratively the best observed RMSE
   #' Returns the best model
   #'@param modelList: list of potential models
+  #'@param testData: dataframe, test data in which the model is trained
+  #'@param feature: outcome feature
   bestRMSE <- Inf 
   bestModel <- modelList[1]
   for (model in modelList) {
@@ -141,7 +141,6 @@ bestModel <- evaluateModels(modelList, test_data, "excess_deaths") # Store best 
 
 ### Prediction ---------------------------------------------...
 predict_excess_deaths <- function(model = bestModel, country,gender,agegroup,deaths){
-    #'
     #'Returns a prediction based on an input regression model and attributes of country, gender, agegroup and number of deaths
     #'As per default the bestModel is chosen
     #'@param model: input ML model, the best Model determined by evaluateModels() per default
@@ -189,6 +188,9 @@ pred_function <- function(model, data_features) {
 
 train_model_country <- function(countryname, outcome_column = 4, horizon = 10) {
   #' Train a forecast model with
+  #' @param countryname: string, name of country
+  #' @param outcome_column: column index of outcome feature, default 4
+  #' @param horizon: maximum time period to be forecasted
   df <- forecastData %>%
     filter(country == countryname)
   forecast_data_list <- create_lagged_df(df, 

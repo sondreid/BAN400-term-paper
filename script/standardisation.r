@@ -164,8 +164,6 @@ standardiseCountry <- function(df, country) {
 
 
 
-
-
 # Data storage ------------------------------------------------------------------------
 
 data_norway  %<>% standardiseCountry(., "Norway")
