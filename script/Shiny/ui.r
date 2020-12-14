@@ -3,9 +3,9 @@ library(ggplot2)
 library(plotly)
 library(formattable)
 
-load("data/totaldata.Rda")
-load("data/MLModel.Rda")
-load("data/table.Rda")
+load(file = "data/totaldata.Rda")
+load(file = "data/MLModel.Rda")
+load(file = "data/tableData.Rda")
 
 
 

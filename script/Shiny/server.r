@@ -22,6 +22,7 @@ library(formattable)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
+load(file = "data/tableData.Rda")
 
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
@@ -123,6 +124,6 @@ server <- function(input, output) {
 
 
 # Remove comment for live test
-#shinyApp(ui, server)
+shinyApp(ui, server)
 
 
