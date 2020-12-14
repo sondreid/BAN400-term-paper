@@ -29,9 +29,21 @@ ui <- fluidPage(
     
     #Short table 
     tabPanel(title = "Main",
+             
              br(),
              p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             
+             p("The data sets used in this analysis are gathered from a statistics bureaus of five european countries.", br(), 
+               "The countries inhibit a common geographic area, but have opted for very different response patterns to combat the spread of covid19.", br(),br(),
+               " The sources of the data sets are as follows:",br(), br(),
+               "UK:     https://www.ons.gov.uk/peoplepopulationandcommunity/birthsdeathsandmarriages/deaths",br(),
+               "France: https://www.insee.fr/en/statistiques/4493808?sommaire=4493845", br(),
+               "Denmark: https://www.statbank.dk/dodc2", br(),
+               "Sweden: https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/", br(),
+               "Norway: https://www.ssb.no/statbank/table/07995/",
+              style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
              br(),
+             
              sidebarLayout(
                sidebarPanel(
                  h5(formattableOutput("shortable")),
@@ -163,11 +175,10 @@ ui <- fluidPage(
                                 value = 0)
                    ),
                mainPanel(
-                 br(),
-                 h3("Prediction"),
-                 p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n"),
-                 p("We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
-                   model based is chosen based on its RMSE (Root-mean-square error)"),
+                 h3("Prediction", style="text-align:center"),
+                 p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n", br(),
+                 "We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
+                   model based is chosen based on its RMSE (Root-mean-square error)",style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
                  br(),
                  h4("Excess deaths based on input parameters:", style="text-align:center"),
                  h3(textOutput("prediction_excess_deaths"), style="text-align:center;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
