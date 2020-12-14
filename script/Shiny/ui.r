@@ -24,6 +24,8 @@ library(caret)
 library(randomForest)
 library(gbm)
 library(forecastML)
+library(kernlab)
+
 
 ## Load RDA files from data folder
 load(file = "data/totaldata.Rda")
