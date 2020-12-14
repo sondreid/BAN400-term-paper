@@ -28,9 +28,10 @@ source("standardisation.r")
 load("../datasett/processed_data_all_countries.Rda")
 
 #### Functions -----------------------------------------------------------------
-"Function that finds the number of weeks we have data accounted for in 2020"
+
 weeksin2020 <- function(df) {
-  #"Function that finds the number of weeks we have data accounted for in 2020"
+  #' Function that finds the number of weeks we have data accounted for in 2020"
+  #' @param df : input dataframe
   return (nrow(df %>% 
                  filter(year == 2020) %>% 
                  select(week) %>% 

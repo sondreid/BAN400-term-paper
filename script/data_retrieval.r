@@ -52,8 +52,8 @@ clean_data <- function(df,
   #' number of rows.
   #' @param df : input dataframe
   #' @param year : input year as character
-  #' @param selectColMale : 
-  #' @param selectColFemale : 
+  #' @param selectColMale : input male columns
+  #' @param selectColFemale : input female columns
   
   data_male <- as.data.frame(t(df))       # t() transposes the data frame
   data_female <- as.data.frame(t(df))
@@ -105,8 +105,8 @@ custom_clean_data_2020 <- function(df,
   #' introduced in this section.
   #' @param df : input dataframe
   #' @param year : input year as character
-  #' @param selectColMale :
-  #' @param selecrtColFemale :
+  #' @param selectColMale : input male columns
+  #' @param selecrtColFemale : input female columns
   
   data_male <- as.data.frame(t(df))
   data_female <- as.data.frame(t(df))
