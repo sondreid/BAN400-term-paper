@@ -257,7 +257,7 @@ data_denmark <-
   rename(gender = " _1",
          agegroup = " _2") %>%
   mutate(gender = substr(gender, 1, 1)) %>%
-  changeNonRecurringRow(., 2, 22) # Fills non recurring rows with given genders 
+  changeNonRecurringRow(., 2, 23) # Fills non recurring rows with given genders 
 
 
 

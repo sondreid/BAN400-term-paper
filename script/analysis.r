@@ -371,6 +371,6 @@ longTable <- function() {
   return (outputtable)
 }
 
-save(shortTable_data, shortTable, file = "Shiny/data/table.Rda") ##################################
+save(shortTable, file = "Shiny/data/table.Rda") 
 save(totaldata, file = "Shiny/data/totaldata.Rda")
 
