@@ -116,6 +116,7 @@ server <- function(input, output) {
                                 agegroup = input$agegroup, 
                                 deaths = input$deaths))
   })
+  output$shortable <- renderFormattable({shortTable()})
   
 }
 

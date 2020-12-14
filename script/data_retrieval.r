@@ -13,7 +13,7 @@ library(janitor)
 
 #### Download last updated version of data -------------------------------------
 download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/pong/tables-and-graphs/preliminary-statistics-on-deaths/",
-              destfile = "../datasett/Sweden/sweden_scb.xlsx")
+             destfile = "../datasett/Sweden/sweden_scb.xlsx")
 
 download.file(url = "https://www.ssb.no/statbank/sq/10044673",
               destfile = "../datasett/Norway/norway_ssb.xlsx")
