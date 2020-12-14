@@ -3,10 +3,12 @@ library(ggplot2)
 library(plotly)
 library(formattable)
 library(caret)
+library(randomForest)
 
-load("data/totaldata.Rda")
-load("data/MLModel.Rda")
-load("data/table.Rda")
+load(file = "data/totaldata.Rda")
+load(file = "data/MLModel.Rda")
+load(file = "data/tableData.Rda")
+
 data <- totaldata
 
 ui <- fluidPage(
@@ -191,7 +193,7 @@ ui <- fluidPage(
                mainPanel(
                  h3("Prediction", style="text-align:center"),
                  p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n", br(),
-                 "We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
+                   "We define several models based on the features country, gender, agegroup and the number of deaths in a given week. The best
                    model based is chosen based on its RMSE (Root-mean-square error)",style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px"),
                  br(),
                  h4("Excess deaths based on input parameters:", style="text-align:center"),

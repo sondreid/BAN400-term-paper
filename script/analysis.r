@@ -19,7 +19,7 @@ library(gt)
 library(scales)       
 library(formattable)  
 library(DT)
-
+library(magrittr)
 
 "In case of sourcing the retrieval file directly to this file"
 source("standardisation.r")
@@ -371,6 +371,6 @@ longTable <- function() {
   return (outputtable)
 }
 
-save(shortTable, file = "Shiny/data/table.Rda") 
+save(shortTable, shortTable_data, file = "Shiny/data/tableData.Rda") 
 save(totaldata, file = "Shiny/data/totaldata.Rda")
 

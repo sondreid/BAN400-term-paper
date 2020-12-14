@@ -22,6 +22,7 @@ library(formattable)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
+load(file = "data/tableData.Rda")
 
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
