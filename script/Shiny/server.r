@@ -1,28 +1,4 @@
-library(shiny)
-library(ggplot2)
-library(rsconnect)
-library(rsconnect)
-library(kableExtra) 
-library(tidyverse)    
-library(tidygraph)    
-library(hrbrthemes)   
-library(viridis)      
-library(dygraphs)     
-library(xts)          
-library(lubridate)    
-library(plotly)     
-library(types)        
-library(pdftools)     
-library(gt)           
-library(scales)       
-library(formattable)  
-library(DT)
-library(magrittr)
-library(formattable)
-
-load(file = "data/totaldata.Rda")
-load(file = "data/MLModel.Rda")
-load(file = "data/tableData.Rda")
+######################### Server script for shiny app #################################
 
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {

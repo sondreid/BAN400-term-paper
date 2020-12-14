@@ -1,9 +1,27 @@
+######################### UI script for shiny app #################################
+
+## Libaries -------------
 library(shiny)
 library(ggplot2)
-library(plotly)
-library(formattable)
-library(caret)
+library(rsconnect)
+library(kableExtra) 
+library(tidyverse)    
+library(tidygraph)    
+library(hrbrthemes)   
+library(viridis)      
+library(dygraphs)     
+library(xts)          
+library(lubridate)    
+library(plotly)     
+library(types)        
+library(pdftools)     
+library(gt)           
+library(scales)       
+library(formattable)  
+library(DT)
+library(magrittr)
 
+## Load RDA files from data folder
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
 load(file = "data/tableData.Rda")
