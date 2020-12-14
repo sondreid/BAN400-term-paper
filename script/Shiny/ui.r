@@ -7,33 +7,31 @@ library(caret)
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
 load("data/table.Rda")
-
-
-
 data <- totaldata
-
-
 
 ui <- fluidPage(
   
   fluidRow(
-    #column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "www/covid_19.png"))),
-    column(width = 12, align = "center", headerPanel(tags$h1("Covid-19 Dashboard")))
+    column(width = 12, 
+           align = "center", 
+           headerPanel(tags$h1("Covid-19 Dashboard")))
   ),
   
-  
   fluidRow(
-    column(width = 12, align = "center", tags$p(tags$strong("BAN400 Home Exam"), tags$em("created by candidate: 3 and 55")))
+    column(width = 12, 
+           align = "center", 
+           tags$p(tags$strong("BAN400 Home Exam"), 
+                  tags$em("created by candidate: 3 and 55")))
   ),
   
   tabsetPanel(
     
-    #Short table 
+    #Main page with short table
     tabPanel(title = "Main",
              
              br(),
-             p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
-             
+             p("Short tabel", 
+               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -57,13 +55,17 @@ ui <- fluidPage(
              
              ),
     
+    # New tab with interactive plot
     tabPanel(title = "Interactive Plot",
              
              br(),
-             p("Try to make your prefered plotoutput" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             p("Try to make your prefered plotoutput" ,
+               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
+            
              sidebarLayout(
+               # Creating a sidebar in order to create preferred plots
                sidebarPanel(
                  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
                  sliderInput(inputId = "week",
@@ -78,24 +80,25 @@ ui <- fluidPage(
                                     choiceNames = names(data),
                                     selected = levels(data$country)),
                  
-                 # selectInput(inputId = 'x', 
-                 #             label = 'X', 
-                 #             choices = c("week"),
-                 #             selected = "week"),
-                 
                  selectInput(inputId = 'y', 
                              label = 'Y', 
-                             choices = c(Deaths = "deaths", "Excess Deaths" = "excess_deaths", "Expected Deaths" = "expected_deaths"), 
+                             choices = c(Deaths = "deaths", 
+                                         "Excess Deaths" = "excess_deaths", 
+                                         "Expected Deaths" = "expected_deaths"), 
                              selected = "deaths"),
                  
                              
                 selectInput(inputId = 'color', 
                             label = 'Color', 
-                            choices = c('None', Gender = "gender", Agegroup = "agegroup", Week = "week", Country = "country", Deaths = "deaths", "Expected Deaths" = "expected_deaths", "Excess Deaths" = "excess_deaths"),
+                            choices = c('None', 
+                                        Gender = "gender", 
+                                        Agegroup = "agegroup", 
+                                        Week = "week", 
+                                        Country = "country", 
+                                        Deaths = "deaths", 
+                                        "Expected Deaths" = "expected_deaths", 
+                                        "Excess Deaths" = "excess_deaths"),
                             selected = "gender"),
-                 
-                 #checkboxInput(inputId = 'jitter', 
-                  #             label = 'Jitter'),
                  
                 checkboxInput(inputId = 'smooth', 
                               label = 'Smooth',
@@ -111,12 +114,18 @@ ui <- fluidPage(
                  
                  selectInput(inputId = 'facet_row', 
                              label = 'Facet Row', 
-                             choices = c(None='.', Gender = "gender", Agegroup = "agegroup", Country = "country"),
+                             choices = c(None='.', 
+                                         Gender = "gender", 
+                                         Agegroup = "agegroup", 
+                                         Country = "country"),
                              selected = "agegroup"),
                  
                  selectInput(inputId ='facet_col', 
                              label = 'Facet Column', 
-                             choices = c(None='.', Gender = "gender", Agegroup = "agegroup", Country = "country"),
+                             choices = c(None='.', 
+                                         Gender = "gender", 
+                                         Agegroup = "agegroup", 
+                                         Country = "country"),
                              selected = "country"),
                 
                ),
@@ -129,7 +138,8 @@ ui <- fluidPage(
     # Plot adjusted by table         
     tabPanel(title = "Interactive Table", 
              br(),
-             p("By filtering data in the table, the plot will adjust" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             p("By filtering data in the table, the plot will adjust",
+               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
              sidebarLayout(
@@ -142,7 +152,8 @@ ui <- fluidPage(
                ),
              
                mainPanel(
-                 plotlyOutput('ggplotTable', height = 500),
+                 plotlyOutput('ggplotTable', 
+                              height = 500),
 
                  width = 5
                
