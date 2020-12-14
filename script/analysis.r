@@ -24,13 +24,11 @@ library(magrittr)
 "In case of sourcing the retrieval file directly to this file"
 source("standardisation.r")
 
-
 "Loading data frames retrieved from standardisation.r"
-
 load("../datasett/processed_data_all_countries.Rda")
 
 #### Functions -----------------------------------------------------------------
-
+"Function that finds the number of weeks we have data accounted for in 2020"
 weeksin2020 <- function(df) {
   #"Function that finds the number of weeks we have data accounted for in 2020"
   return (nrow(df %>% 
@@ -89,9 +87,6 @@ assembleAllData <- function(dfVector = c("data_norway",
   totaldata %<>% filter(week <= minimalweeks)
   return (totaldata)
 }
-
-
-
 
 #### Total Data ----------------------------------------------------------------
 "Totaldata is a dataframe which contains all the created data frames to

@@ -11,8 +11,6 @@ library(types)
 library(lubridate)
 library(janitor)  
 
-
-
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
 stored element for each new group. The function has following parameters:
@@ -42,7 +40,6 @@ The function itself transposes the dataset into two separated data frames
 of male and female, and rowbinds them at the end. 
 * pivot_longer() is a function that decreases selected columns and increases
 number of rows."
-
 clean_data <- function(df, 
                        year =? chr, 
                        selectColMale, 
@@ -379,8 +376,6 @@ rm(data_uk_2020)
 datafiles_france <- list.files(path = "../datasett/France/", 
                     pattern = "*.csv", 
                     full.names = TRUE) 
-
-
 
 "Sapply() to read each file with read_csv2 with sep = ';',
 then bind rows by id. The rest of the code does the cleaning"    
