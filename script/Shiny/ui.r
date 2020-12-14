@@ -5,8 +5,6 @@ library("formattable")
 
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
-load("data/table.Rda")
-
 
 
 data <- totaldata
@@ -173,7 +171,6 @@ ui <- fluidPage(
                  h3(formattableOutput("shortable"))
                ),
              )
-    )
              
              
             
