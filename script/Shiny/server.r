@@ -38,7 +38,7 @@ server <- function(input, output) {
                            "Expected Deaths", 
                            "Excess Deaths"),
               filter = "top",
-              options = list(pageLength = 5, autoWidth = 5, lengthMenu = 5, scrollX = T,
+              options = list(pageLength = 10, autoWidth = 5, lengthMenu = c(5,10,15,50,100,nrow(longTable_data)), scrollX = T,
                              initComplete = JS(
                                "function(settings, json) {",
                                "$(this.api().table().header()).css({'background-color': '#0269A4', 'color': '#fff'});",
@@ -111,9 +111,9 @@ server <- function(input, output) {
   # Predicted excess deaths in ML tab
   output$prediction_excess_deaths <- renderText({
     paste(predict_excess_deaths(country = input$country,  
-                                                                         gender = input$gender, 
-                                                                         agegroup = input$agegroup, 
-                                                                         deaths = input$deaths))
+                                gender = input$gender, 
+                                agegroup = input$agegroup, 
+                                deaths = input$deaths))
   })
   
 }

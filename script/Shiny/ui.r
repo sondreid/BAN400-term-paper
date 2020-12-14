@@ -1,8 +1,10 @@
 library(shiny)
 library(ggplot2)
+library(plotly)
 
 load("data/totaldata.Rda")
-load("data/MLmodel.Rda")
+load("data/MLModel.Rda")
+
 
 data <- totaldata
 
@@ -107,7 +109,7 @@ ui <- fluidPage(
              
                mainPanel(
                  plotlyOutput('ggplotTable', height = 500),
-                 
+
                  width = 5
                
                ))
