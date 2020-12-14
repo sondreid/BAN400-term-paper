@@ -17,16 +17,32 @@ ui <- fluidPage(
   
   fluidRow(
     #column(width = 1, tags$a(href = "https://olavik17.shinyapps.io/shiny/?_ga=2.219468638.671758994.1603877082-1160339763.1603877082", tags$img(height = 70, width = 125, src = "www/covid_19.png"))),
-    column(width = 12, align = "center", headerPanel(tags$h1("Covid-19 dashboard")))
+    column(width = 12, align = "center", headerPanel(tags$h1("Covid-19 Dashboard")))
   ),
   
   
   fluidRow(
-    column(width = 12, align = "center", tags$p("A dashboard of excess deaths statistics in the Covid-19 pandemic", tags$em("Covid-19"), "in", tags$strong("Shiny"), "app.") )
+    column(width = 12, align = "center", tags$p(tags$strong("BAN400 Home Exam"), tags$em("created by candidate: 3 and 55")))
   ),
   
   tabsetPanel(
+    
+    #Short table 
     tabPanel(title = "Main",
+             br(),
+             p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
+             sidebarLayout(
+               sidebarPanel(
+                 h5(formattableOutput("shortable")),
+                 width = 12
+               ),
+               mainPanel(
+                 width = 0
+               )
+             )),
+    
+    tabPanel(title = "Interactive Plot",
              
              br(),
              p("Try to make your prefered plotoutput" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
@@ -96,7 +112,7 @@ ui <- fluidPage(
              ),
     
     # Plot adjusted by table         
-    tabPanel(title = "Table", 
+    tabPanel(title = "Interactive Table", 
              br(),
              p("By filtering data in the table, the plot will adjust" ,style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
@@ -159,31 +175,15 @@ ui <- fluidPage(
 
                ),
               )
-             ),
+             )
   
     
-    #Short tabel 
-    tabPanel(title = "Short table",
-             br(),
-             p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
-             br(),
-             
-             
-             
-             sidebarLayout(
-               sidebarPanel(
-                 h5(formattableOutput("shortable")),
-                 width = 12
-               ),
-               mainPanel(
-                 width = 0
-               )
-             )
+    
     )
              
     )          
             
-  )
+  
 
 
 
