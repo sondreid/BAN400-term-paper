@@ -1,6 +1,6 @@
 ######################### UI script for shiny app #################################
 
-## Libaries -------------
+## Libraries -------------
 library(shiny)
 library(ggplot2)
 library(rsconnect)
@@ -22,6 +22,19 @@ library(DT)
 library(magrittr)
 library(caret)
 library(randomForest)
+
+
+
+library(caret)
+library(dplyr)
+library(magrittr)
+library(gbm)
+library(docstring)
+library(ggplot2)
+library(doParallel)
+library(randomForest)
+library(plotly)
+library(forecastML)
 
 
 ## Load RDA files from data folder
@@ -75,7 +88,7 @@ ui <- fluidPage(
                "Norway: https://www.ssb.no/statbank/table/07995/",
                style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px")
              
-             ),
+    ),
     
     # New tab with interactive plot
     tabPanel(title = "Interactive Plot",
@@ -85,7 +98,7 @@ ui <- fluidPage(
                style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
-            
+             
              sidebarLayout(
                # Creating a sidebar in order to create preferred plots
                sidebarPanel(
@@ -109,27 +122,27 @@ ui <- fluidPage(
                                          "Expected Deaths" = "expected_deaths"), 
                              selected = "deaths"),
                  
-                             
-                selectInput(inputId = 'color', 
-                            label = 'Color', 
-                            choices = c('None', 
-                                        Gender = "gender", 
-                                        Agegroup = "agegroup", 
-                                        Week = "week", 
-                                        Country = "country", 
-                                        Deaths = "deaths", 
-                                        "Expected Deaths" = "expected_deaths", 
-                                        "Excess Deaths" = "excess_deaths"),
-                            selected = "gender"),
                  
-                checkboxInput(inputId = 'smooth', 
-                              label = 'Smooth',
-                              value = TRUE),
-                
-                checkboxInput(inputId = "actual",
-                             label = "Actual deaths",
-                             value = TRUE),
-                
+                 selectInput(inputId = 'color', 
+                             label = 'Color', 
+                             choices = c('None', 
+                                         Gender = "gender", 
+                                         Agegroup = "agegroup", 
+                                         Week = "week", 
+                                         Country = "country", 
+                                         Deaths = "deaths", 
+                                         "Expected Deaths" = "expected_deaths", 
+                                         "Excess Deaths" = "excess_deaths"),
+                             selected = "gender"),
+                 
+                 checkboxInput(inputId = 'smooth', 
+                               label = 'Smooth',
+                               value = TRUE),
+                 
+                 checkboxInput(inputId = "actual",
+                               label = "Actual deaths",
+                               value = TRUE),
+                 
                  checkboxInput(inputId = "expected",
                                label = "Expected deaths",
                                value = TRUE),
@@ -149,13 +162,13 @@ ui <- fluidPage(
                                          Agegroup = "agegroup", 
                                          Country = "country"),
                              selected = "country"),
-                
+                 
                ),
                mainPanel(
                  plotlyOutput('plot', height = 700)
-                  
+                 
                ))
-             ),
+    ),
     
     # Plot adjusted by table         
     tabPanel(title = "Interactive Table", 
@@ -167,49 +180,50 @@ ui <- fluidPage(
              sidebarLayout(
                sidebarPanel(
                  tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
-               
+                 
                  DT::dataTableOutput("tableALL"),
                  
                  width = 7
                ),
-             
+               
                mainPanel(
                  plotlyOutput('ggplotTable', 
                               height = 500),
-
+                 
                  width = 5
-               
+                 
                ))
              
-               
-             ),
+             
+    ),
+    
     # ML prediction
     tabPanel(title = "Prediction",
              br(),
              p("Prediction by machine learning", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
-          
+             
              sidebarLayout(
-                 sidebarPanel(
-                   tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
-                   
-                   selectInput(inputId = "country", 
+               sidebarPanel(
+                 tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
+                 
+                 selectInput(inputId = "country", 
                              label = h3("Country"),
                              choices = levels(MLdata$country),
                              selected = "France"),
-                   selectInput(inputId = "gender", 
+                 selectInput(inputId = "gender", 
                              label = h3("Gender"),
                              choices = levels(MLdata$gender),
                              selected = "F"),
-                   selectInput(inputId = "agegroup", 
+                 selectInput(inputId = "agegroup", 
                              label =h3("Agegroup"),
                              choices = levels(MLdata$agegroup),
                              selected = "0-64"),
-            
-                   numericInput(inputId = "deaths", 
-                                h3("Deaths"),
-                                value = 0)
-                   ),
+                 
+                 numericInput(inputId = "deaths", 
+                              h3("Deaths"),
+                              value = 0)
+               ),
                mainPanel(
                  h3("Prediction", style="text-align:center"),
                  p("Based on the data of five european countries we split our data into train data and test data in 80/20 ratio.\n", br(),
@@ -219,18 +233,45 @@ ui <- fluidPage(
                  h4("Excess deaths based on input parameters:", style="text-align:center"),
                  h3(textOutput("prediction_excess_deaths"), style="text-align:center;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
                  br()
+                 
+               ),
+             )
+    ),
+    
+    tabPanel(title = "Forecast",
+             
+             br(),
+             p("Forcast", 
+               style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
+             
+             sidebarLayout(
+               sidebarPanel(
+                 tags$style(HTML(".js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {background: gray}")),
+                 
+                 selectInput(inputId = "countryname", 
+                             label = h3("Country"),
+                             choices = levels(MLdata$country),
+                             selected = "Norway")
 
                ),
-              )
-             )
-  
-    
-    
-    )
+               mainPanel(
+                 p("Mainpanel"),
+                 plotlyOutput("forecast_plot")
+               )
+             ),
+             p("Something",
+               style="text-align:justify;color:black;background-color:#F0F0F0;padding:15px;border-radius:10px")
              
-    )          
-            
+    )
+    
+    
+    
+  )
   
+)          
+
+
 
 
 
