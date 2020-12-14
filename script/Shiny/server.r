@@ -98,6 +98,6 @@ server <- function(input, output) {
 
 
 # Remove comment for live test
-shinyApp(ui, server)
+#shinyApp(ui, server)
 
 
