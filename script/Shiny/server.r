@@ -1,33 +1,11 @@
-library(shiny)
-library(ggplot2)
-library(rsconnect)
-library(rsconnect)
-library(kableExtra) 
-library(tidyverse)    
-library(tidygraph)    
-library(hrbrthemes)   
-library(viridis)      
-library(dygraphs)     
-library(xts)          
-library(lubridate)    
-library(plotly)     
-library(types)        
-library(pdftools)     
-library(gt)           
-library(scales)       
-library(formattable)  
-library(DT)
+######################### Server script for shiny app #################################
 
-load(file = "data/totaldata.Rda")
-load(file = "data/MLModel.Rda")
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
-  
   longTable_data <- totaldata %>%
     select(-year)
-  # Datatable
   output$tableALL  <- DT :: renderDataTable({
-    #load(file="data/longTable_data.Rda")
+
     datatable(data = longTable_data, 
               colnames = c("Gender", 
                            "Agegroup", 
@@ -37,10 +15,10 @@ server <- function(input, output) {
                            "Expected Deaths", 
                            "Excess Deaths"),
               filter = "top",
-              options = list(pageLength = 5, autoWidth = 5, lengthMenu = 5, scrollX = T,
+              options = list(pageLength = 10, autoWidth = 5, lengthMenu = c(5,10,15,50,100,nrow(longTable_data)), scrollX = T,
                              initComplete = JS(
                                "function(settings, json) {",
-                               "$(this.api().table().header()).css({'background-color': '#808080', 'color': '#fff'});",
+                               "$(this.api().table().header()).css({'background-color': '#0269A4', 'color': '#fff'});",
                                "}")),
               class = 'cell-border stripe')
     
@@ -80,9 +58,9 @@ server <- function(input, output) {
     totaldata[totaldata$week >= input$week[1] & totaldata$week <= input$week[2] & totaldata$country %in% input$countries,]
   })
   #' Plot at page 1
-  output$plot <- renderPlot({
+  output$plot <- renderPlotly({
     
-    p <- ggplot(data(), aes_string(x=input$x, y=input$y))
+    p <- ggplot(data(), aes_string(x="week", y=input$y))
     
     if (input$color != 'None')
       p <- p + aes_string(color=input$color)
@@ -91,8 +69,8 @@ server <- function(input, output) {
     if (facets != '. ~ .')
       p <- p + facet_grid(facets)
     
-    if (input$jitter)
-      p <- p + geom_jitter()
+    #if (input$jitter)
+     # p <- p + geom_jitter()
     
     if (input$smooth)
       p <- p + geom_smooth()
@@ -103,24 +81,23 @@ server <- function(input, output) {
     if (input$expected)
       p <- p + geom_smooth(data = data(), 
                            aes(x = week, y = expected_deaths))
+    ggplotly(p)
     
-    p
-    
-  }, height=700)
-  
+  })
   
   # Predicted excess deaths in ML tab
   output$prediction_excess_deaths <- renderText({
-    paste("Excess deaths based on input parameters", predict_excess_deaths(country = input$country,  
-                                                                         gender = input$gender, 
-                                                                         agegroup = input$agegroup, 
-                                                                         deaths = input$deaths))
+    paste(predict_excess_deaths(country = input$country,  
+                                gender = input$gender, 
+                                agegroup = input$agegroup, 
+                                deaths = input$deaths))
   })
+  output$shortable <- renderFormattable({shortTable()})
   
 }
 
 
 # Remove comment for live test
-shinyApp(ui, server)
+#shinyApp(ui, server)
 
 

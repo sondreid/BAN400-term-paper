@@ -1,12 +1,17 @@
-# BAN400-term-paper
-Repository for BAN400 term paper
+# BAN400-term-paper: COVID-19 dashboard
+For this assignment we chose to continue the development of our Covid-19 dashboard, as first presented in BAN420.
 
 
-Changes:
 
-    Shiny app
-        Interaktiv tabell
-        Interaktive plots
-    Standarisation av gender
-    Standardisation av age
-    Generell forbedring av kode
+
+
+
+
+Github:
+https://github.com/sondreid/BAN400-term-paper
+
+
+Live shiny app:
+https://olavik17.shinyapps.io/shiny/
+
+

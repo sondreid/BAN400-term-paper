@@ -177,7 +177,7 @@ plotfunction(totaldata,
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 
 
-longTable()
+#longTable()
 
 ```
 

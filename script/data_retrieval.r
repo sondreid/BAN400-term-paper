@@ -11,6 +11,22 @@ library(types)
 library(lubridate)
 library(janitor)  
 
+#### Download last updated version of data -------------------------------------
+download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/pong/tables-and-graphs/preliminary-statistics-on-deaths/",
+             destfile = "../datasett/Sweden/sweden_scb.xlsx")
+
+download.file(url = "https://www.ssb.no/statbank/sq/10044673",
+              destfile = "../datasett/Norway/norway_ssb.xlsx")
+
+
+download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek48202007122020155900.xlsx",
+              destfile = "../datasett/UK/UK_2020.xlsx")
+
+#download.file(url = "", destfile = "../datasett/France/france_2020.csv")
+
+#download.file(url = "", destfile = "../datasett/Denmark/danmark_statbank_2013-2020.xlsx")
+
+
 
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
@@ -136,7 +152,7 @@ custom_clean_data_2020 <- function(df,
 #### Data Norway ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns"
 data_norway <- read_excel("../datasett/Norway/norway_ssb.xlsx", 
-                          range = "Dode1!a4:X1594")
+                          range = "Dode1!a4:AA1594")
 
 
 "Changing the empty columns by replicating gender names (1) and agegroups (2)"
@@ -171,10 +187,10 @@ data_norway  %<>%
 
 #### Data Sweden ---------------------------------------------------------------
 "Reading excel file with given range of rows and columns, and selected sheet"
-data_sweden <- 
-  read_excel("../datasett/Sweden/sweden_scb.xlsx", 
-             sheet = "Tabell 7", 
-             range = "Tabell 7!a9:s62")
+ data_sweden <- 
+   read_excel("../datasett/Sweden/sweden_scb.xlsx", 
+              sheet = "Tabell 7", 
+              range = "Tabell 7!a9:s62")
 
 
 "Creates a new data frame containing data from 2015-2019.
@@ -205,8 +221,8 @@ data_sweden_2020 <- data_sweden %>%
          gender = sapply(strsplit(values ," "), `[`, 1),
          agegroup = sapply(strsplit(values ," "), `[`, 2)) %>% 
   select(-"values") %>% 
-  rename(week = "Vecka") %>%
-  filter(deaths != 0)          # Filter out zero deaths
+  rename(week = "Vecka") %>% 
+  filter(deaths != 0.0) # In order to remove zero-deaths-week
      
 
 "Combines data frames to a single data frame, mutates agegroup column to contain
@@ -222,6 +238,8 @@ data_sweden <- rbind(data_sweden_2015_2019,
          deaths, 
          country) 
 
+rm(data_sweden_2015_2019)
+rm(data_sweden_2020)
 
 #### Data Denmark --------------------------------------------------------------
 "Reads csv-file with read_delim() and separete it by ';', alternative:
@@ -235,11 +253,11 @@ data_denmark <- read_delim("../datasett/Denmark/danmark_statbank_2013-2020.csv",
 "Manipulates the data frame by selecting useful columns with [], 
 and mutatating gender column in to standardized gender name."
 data_denmark <- 
-  data_denmark[(25:70),-1] %>%
+  data_denmark[-1,] %>%
   rename(gender = " _1",
          agegroup = " _2") %>%
   mutate(gender = substr(gender, 1, 1)) %>%
-  changeNonRecurringRow(., 1, 23) # Fills non recurring rows with given genders 
+  changeNonRecurringRow(., 2, 23) # Fills non recurring rows with given genders 
 
 
 
@@ -333,7 +351,7 @@ data_uk_2019 <- read_xls("../datasett/UK/UK_2019.xls",
 
 data_uk_2020 <- read_xlsx("../datasett/UK/UK_2020.xlsx", 
                           sheet = "Weekly figures 2020",
-                          range = "A4:AI85") %>% 
+                          range = "A4:BC85") %>% 
   unite(., x, 1:2, na.rm = TRUE) %>%
   custom_clean_data_2020(., 
                          2020,
