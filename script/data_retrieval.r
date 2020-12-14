@@ -12,17 +12,22 @@ library(lubridate)
 library(janitor)  
 
 #### Functions -----------------------------------------------------------------
-"Records group-element for a given column and fills empty elements with the 
-stored element for each new group. The function has following parameters:
-df (data frame), column index with datatype numeric and groupnameInterval, data-
-type numeric, such that function know the frequency in which the groupname
-occurs. The if statement evaluates the occurance of the groupname by using
-modulo-operator such that the remainder is equal zero and is not an empty
-value NA, then set the new groupname equals name variable. Else, fill the rest 
-of the given column with stored groupname. Returns the data frame (df)."
+
 changeNonRecurringRow <- function(df, 
                                   column =? numeric, 
                                   groupnameInterval =? numeric) {
+  #' Records group-element for a given column and fills empty elements with the 
+  #' stored element for each new group. The function has following parameters:
+  #' df (data frame), column index with datatype numeric and groupnameInterval, data-
+  #' type numeric, such that function know the frequency in which the groupname
+  #' occurs. The if statement evaluates the occurance of the groupname by using
+  #' modulo-operator such that the remainder is equal zero and is not an empty
+  #' value NA, then set the new groupname equals name variable. Else, fill the rest 
+  #' of the given column with stored groupname. Returns the data frame (df).
+  #' @param df : input dataframe
+  #' @param column : input a numeric for which column of dataframe
+  #' @param groupnameInterval : input numeric for how often the recording appears
+  
   name <- ""
   for (i in 1:nrow(df)) {
     if ((((i-1) %% groupnameInterval) == 0) && !is.na(df[i, column]) ){ 
@@ -35,15 +40,20 @@ changeNonRecurringRow <- function(df,
 }
 
 
-"Function spesific to the UK dataset (2014-2019) that cleans the data.
-The function itself transposes the dataset into two separated data frames
-of male and female, and rowbinds them at the end. 
-* pivot_longer() is a function that decreases selected columns and increases
-number of rows."
+
 clean_data <- function(df, 
                        year =? chr, 
                        selectColMale, 
                        selectColFemale){
+  #' Function spesific to the UK dataset (2014-2019) that cleans the data.
+  #' The function itself transposes the dataset into two separated data frames
+  #' of male and female, and rowbinds them at the end. 
+  #' * pivot_longer() is a function that decreases selected columns and increases
+  #' number of rows.
+  #' @param df : input dataframe
+  #' @param year : input year as character
+  #' @param selectColMale : 
+  #' @param selectColFemale : 
   
   data_male <- as.data.frame(t(df))       # t() transposes the data frame
   data_female <- as.data.frame(t(df))
@@ -82,16 +92,21 @@ clean_data <- function(df,
 
 
 
-"Function spesific to UK dataset 2020 that cleans the data. Is almost an 
-exact copy of the functon above, except from some specific arguments caused 
-of different formatting in the year 2020 for the given dataset. Alternativly,
-the function above could be modified in order to fit these formatting issues, 
-but that would increase the number of paramters. Else, there is no new functions
-introduced in this section."
+
 custom_clean_data_2020 <- function(df, 
                                    year =? chr, 
                                    selectColMale, 
                                    selectColFemale){
+  #' Function spesific to UK dataset 2020 that cleans the data. Is almost an 
+  #' exact copy of the functon above, except from some specific arguments caused 
+  #' of different formatting in the year 2020 for the given dataset. Alternativly,
+  #' the function above could be modified in order to fit these formatting issues, 
+  #' but that would increase the number of paramters. Else, there is no new functions
+  #' introduced in this section.
+  #' @param df : input dataframe
+  #' @param year : input year as character
+  #' @param selectColMale :
+  #' @param selecrtColFemale :
   
   data_male <- as.data.frame(t(df))
   data_female <- as.data.frame(t(df))
@@ -117,7 +132,6 @@ custom_clean_data_2020 <- function(df,
     pivot_longer(cols = !c(week, gender),
                  names_to = "agegroup",
                  values_to = "deaths")
-  
   
   data <- rbind(data_male, data_female) %>% 
     mutate(year = rep(year), 
@@ -409,7 +423,6 @@ data_france <- sapply(datafiles_france, read_csv2, simplify=FALSE) %>%
 
 
 #### Remove functions that are no longer needed in memory ----------------------
-
 rm(changeNonRecurringRow)
 rm(clean_data)
 rm(custom_clean_data_2020)
