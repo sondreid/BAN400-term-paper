@@ -1,10 +1,12 @@
 library(shiny)
 library(ggplot2)
 library(plotly)
-library("formattable")
+library(formattable)
 
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
+load("data/table.Rda")
+
 
 
 data <- totaldata
@@ -161,23 +163,29 @@ ui <- fluidPage(
   
     
     #Short tabel 
-    tabPanel(title = "Short Tabel",
+    tabPanel(title = "Short table",
              br(),
              p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
              br(),
              
+             
+             
              sidebarLayout(
-               sidebarPanel(),
+               sidebarPanel(
+                 h5(formattableOutput("shortable")),
+                 width = 12
+               ),
                mainPanel(
-                 h3(formattableOutput("shortable"))
+                 width = 0
                )
              )
+    )
              
     )          
             
   )
 
-)
+
 
 
 
