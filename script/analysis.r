@@ -22,7 +22,7 @@ library(DT)
 library(magrittr)
 
 "In case of sourcing the retrieval file directly to this file"
-source("standardisation.r")
+#source("standardisation.r")
 
 
 
@@ -176,7 +176,7 @@ plotfunction <- function(df,
                 plot_title_size = 12, 
                 base_size = 14,
                 axis_title_size = 12)
-
+  
   
   
   if (!is.na(ymin) | !is.na(ymax)){
@@ -333,8 +333,8 @@ shortTable_data <- totaldataFilter  %>%
 
 
 
-              
-              
+
+
 "Function that returns shortTableData using the formattable package"
 shortTable <- function() {
   lightred = "#ff7f7f"
@@ -367,7 +367,7 @@ longTable <- function() {
                            filter = "top",
                            options = list(pageLength = 20, autoWidth = TRUE),
                            class = 'cell-border stripe'
-                           )
+  )
   return (outputtable)
 }
 
