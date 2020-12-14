@@ -2,12 +2,10 @@
 
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
-  
   longTable_data <- totaldata %>%
     select(-year)
-  # Datatable
   output$tableALL  <- DT :: renderDataTable({
-    #load(file="data/longTable_data.Rda")
+
     datatable(data = longTable_data, 
               colnames = c("Gender", 
                            "Agegroup", 

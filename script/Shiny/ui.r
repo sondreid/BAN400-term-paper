@@ -20,6 +20,13 @@ library(scales)
 library(formattable)  
 library(DT)
 library(magrittr)
+library(caret)
+library(dplyr)
+library(magrittr)
+library(gbm)
+library(docstring)
+library(doParallel)
+library(randomForest)
 
 ## Load RDA files from data folder
 load(file = "data/totaldata.Rda")
