@@ -9,8 +9,10 @@ library(dplyr)
 library(magrittr)
 library(gbm)
 library(docstring)
+library(ggplot2)
 library(doParallel)
 library(randomForest)
+library(plotly)
 library(forecastML)
 
 "Loading data frames retrieved from standardisation.r"
@@ -160,9 +162,7 @@ forecastData %<>%
   select(week, country, deaths, excess_deaths)
 
 
-date_frequency <- "1 week"
-outcome_column <- 4
-horizon <- 10
+
 
 model_function <- function(data) {
   #' Model function
@@ -176,7 +176,7 @@ pred_function <- function(model, data_features) {
 }
 
 
-train_model_country <- function(countryname) {
+train_model_country <- function(countryname, outcome_column = 4, horizon = 10) {
   df <- forecastData %>%
     filter(country == countryname)
   forecast_data_list <- create_lagged_df(df, 
@@ -218,41 +218,47 @@ forecast_country <- function(df = forecastData, countryname) {
   #'@param countryname: String name of country
   latestweek <- tail(df[order(df$week),]$week, n =  1)
   print(paste("latest week", latestweek))
-  country_forecast <- train_model_country(countryname)
+  country_forecast <- train_model_country(countryname = countryname)
   country_forecast %<>% 
     rename("week" = horizon, "excess_deaths" = excess_deaths_pred) %>% 
     mutate(country = countryname,
-           week = week + latestweek) %>% 
-    select(week, country, excess_deaths) 
+           week = week + latestweek,
+           type = "Forecast") %>% 
+    select(week, country, type, excess_deaths) 
   print(df)
   df %<>% 
     filter(week <= latestweek,
            country == countryname) %>%
-    select(week, country, excess_deaths)
+    mutate(type = "Estimate") %>%
+    select(week, country, type, excess_deaths) 
   print(df)
   
   df %<>% 
-    rbind(., country_forecast)
+    rbind(., country_forecast) %>%
+    transform(type = as.factor(type))
   return(df)
 
 }
 
+franceForecast <- forecast_country(countryname = "France")
+#Group, type=
 
 
 
 generate_forecast_plot <- function(countryname) {
-  df <- forecast_country(countryname = "France")
+  df <- forecast_country(countryname = countryname)
   plot <- df %>%
     ggplot() +
     geom_smooth(aes(x = week,
-                    y = excess_deaths)) +
+                    y = excess_deaths,
+                    colour = type)) +
     labs(x = "Weeks", y = "Excess deaths") +
     theme(plot.background=element_rect()) +
     ggtitle(paste(countryname, "estimated and forecasted excess deaths"))
   ggplotly(plot)
 }
 
-generate_forecast_plot(countryname = "France")
+generate_forecast_plot(countryname = "Denmark")
 
 
 
@@ -337,7 +343,13 @@ predict_excess_deaths(country = "France", gender = "F", agegroup = "85+", deaths
 
 MLdata <- totaldata
 # Save model -----------------------------------------
-#'Save the model in a Rda file for quick loading into memory for use in other rscripts (such as the shiny application)
-save(bestModel, MLdata, predict_excess_deaths, file = "Shiny/data/MLModel.Rda")
+"Save the prediction ML model and necessary forecast data and functions in a Rda file
+ for quick loading into memory for use in other rscripts (such as the shiny application)"
+save(bestModel, 
+     MLdata, 
+     predict_excess_deaths, 
+     forecastData, 
+     model_function, 
+     pred_function,  file = "Shiny/data/MLModel.Rda")
 
 
