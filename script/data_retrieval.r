@@ -11,23 +11,6 @@ library(types)
 library(lubridate)
 library(janitor)  
 
-#### Download last updated version of data -------------------------------------
-#download.file(url = "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population/population-composition/population-statistics/pong/tables-and-graphs/preliminary-statistics-on-deaths/",
- #            destfile = "../datasett/Sweden/sweden_scb.xlsx")
-
-#download.file(url = "https://www.ssb.no/statbank/sq/10044673",
- #             destfile = "../datasett/Norway/norway_ssb.xlsx")
-
-
-#download.file(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fbirthsdeathsandmarriages%2fdeaths%2fdatasets%2fweeklyprovisionalfiguresondeathsregisteredinenglandandwales%2f2020/publishedweek48202007122020155900.xlsx",
- #             destfile = "../datasett/UK/UK_2020.xlsx")
-
-#download.file(url = "", destfile = "../datasett/France/france_2020.csv")
-
-#download.file(url = "", destfile = "../datasett/Denmark/danmark_statbank_2013-2020.xlsx")
-
-
-
 #### Functions -----------------------------------------------------------------
 "Records group-element for a given column and fills empty elements with the 
 stored element for each new group. The function has following parameters:
@@ -57,7 +40,6 @@ The function itself transposes the dataset into two separated data frames
 of male and female, and rowbinds them at the end. 
 * pivot_longer() is a function that decreases selected columns and increases
 number of rows."
-
 clean_data <- function(df, 
                        year =? chr, 
                        selectColMale, 
@@ -394,8 +376,6 @@ rm(data_uk_2020)
 datafiles_france <- list.files(path = "../datasett/France/", 
                     pattern = "*.csv", 
                     full.names = TRUE) 
-
-
 
 "Sapply() to read each file with read_csv2 with sep = ';',
 then bind rows by id. The rest of the code does the cleaning"    

@@ -23,14 +23,8 @@ Server:
 UI:
 
 
-
-
-
-
-
 Github:
 https://github.com/sondreid/BAN400-term-paper
-
 
 Live shiny app:
 https://olavik17.shinyapps.io/shiny/
