@@ -44,8 +44,7 @@ aggregateColumn <- function(df = totaldata,
 totaldata %<>% 
   transform(
             country = as.factor(country),
-            year   = as.factor(year),
-            week = as.factor(week)) %>%
+            year   = as.factor(year)) %>%
   select(week, country, gender, agegroup, deaths, excess_deaths) %>%
   rbind(., totaldata %>%  ## Add aggregate for gender and agegroup (deaths and excess deaths for all genders and agegroups for a week)
           group_by(country, week) %>%
@@ -153,49 +152,119 @@ postResample(pred = rfPrediction, obs = test_data$excess_deaths) #Evaluate
 
 #### Forecast ----------------------------------------------------
 
+# Aggregate features
+
+forecastData %<>%
+  filter(gender == "All",
+         agegroup == "All") %>%
+  select(week, country, deaths, excess_deaths)
+
+
 date_frequency <- "1 week"
-outcome_column <- 6
+outcome_column <- 4
+horizon <- 10
+
+model_function <- function(data) {
+  #' Model function
+  
+  model <- randomForest::randomForest(excess_deaths ~., data = data, ntree = 200)
+  return(model)
+}
+pred_function <- function(model, data_features) {
+  data_pred <- data.frame("y_pred" = predict(model, data_features))
+  return(data_pred)
+}
+train_model_all_countries <- function() {
+  #' Train model for all countries
+  
+}
+
+train_model_country <- function(countryname) {
+  df <- forecastData %>%
+    filter(country == countryname)
+  forecast_data_list <- create_lagged_df(df, 
+                                    type = "train", 
+                                    method = "direct", 
+                                    outcome_col = outcome_column, 
+                                    lookback = 1:15, 
+                                    horizons = 1:horizon,
+                                    dynamic_features ="law")
+  
+  windows <- create_windows(lagged_df = forecast_data_list, 
+                            window_length = 0)
+  forecast_model <- forecastML::train_model(forecast_data_list, windows, model_name = "RF", 
+                                            model_function, use_future = FALSE)
+  
+  data_forecast_list <- create_lagged_df(df, 
+                                    type = "forecast", 
+                                    method = "direct", 
+                                    outcome_col = outcome_column, 
+                                    lookback = 1:15, 
+                                    frequency = "week",
+                                    horizons = 1:10)
+  data_forecasts <- predict(forecast_model, 
+                            prediction_function =list(pred_function),
+                            data = data_forecast_list) 
+  data_forecasts <- forecastML::combine_forecasts(data_forecasts)
+  return (data_forecasts)
+}
+
+#Sweden test
+swedenForecast <- train_model_country("Sweden")
+franceForecast <- train_model_country("France")
+ukForecast <- train_model_country("UK")
 
 
-forecast_intrain <- createDataPartition(y = totaldata$excess_deaths,
-                               p = 0.8,
-                               list = FALSE)
+forecast_country <- function(df = forecastData, countryname) {
+  #'
+  #'@param df: dataframe with all country data
+  #'@param countryname: String name of country
+  latestweek <- tail(df[order(df$week),]$week, n =  1) -1
+  print(paste("latest week", latestweek))
+  country_forecast <- train_model_country(countryname)
+  country_forecast %<>% 
+    rename("week" = horizon, "excess_deaths" = excess_deaths_pred) %>% 
+    mutate(country = countryname,
+           week = week + latestweek) %>% 
+    select(week, country, excess_deaths) 
+  print(df)
+  df %<>% 
+    filter(week <= latestweek,
+           country == countryname) %>%
+    select(week, country, excess_deaths)
+  print(df)
+  
+  df %<>% 
+    rbind(., country_forecast)
+  return(df)
 
-forecast_train_data <- forecastData[forecast_intrain,]
-forecast_test_data <-  forecastData[-forecast_intrain,]
+}
+
+test <- generate_plot(forecastData, "France")
+
+
+generate_plot <- function(df, hor) 
+
 forecast_data_list <- create_lagged_df(forecastData, 
                                         type = "train", 
                                         method = "direct", 
                                         outcome_col = outcome_column, 
                                         lookback = 1:15, 
                                         horizons = 1:10,
-                                       #groups?
                                         dynamic_features ="law")
 
 
 windows <- create_windows(lagged_df = forecast_data_list, 
                           window_length = 0)
 
-model_function <- function(data) {
-  #'
-  
-  #outcome_names <- names(data)[outcome_column]
-  #print(paste("outcome names", outcome_names))
-  #model_formula <- formula(paste0(outcome_names,  "~ ."))
- # print(paste("formula:", model_formula))
-  
-  model <- randomForest::randomForest(excess_deaths ~., data = data, ntree = 200)
-  return(model)
-}
 
+
+#Train model
 forecast_model <- forecastML::train_model(forecast_data_list, windows, model_name = "RF", 
                                            model_function, use_future = FALSE)
 
 
-pred_function <- function(model, data_features) {
-  data_pred <- data.frame("y_pred" = predict(model, data_features))
-  return(data_pred)
-}
+
 
 
 data_forecast <- create_lagged_df(forecastData, 
