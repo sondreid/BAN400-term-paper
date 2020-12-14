@@ -25,67 +25,14 @@ library(magrittr)
 #source("standardisation.r")
 
 
-
 "Loading data frames retrieved from standardisation.r"
 
 load("../datasett/processed_data_all_countries.Rda")
 
-
 #### Functions -----------------------------------------------------------------
-"This is a function that takes a given data frame, single agegrouping, gender,
-which by default is Male 'M' and Female 'F' and also given countries. The
-mutation of min_reg and max_reg is done in order to fill the area inbetween 
-the actual and expected regression lines."
-plotfunction_diff <- function(df, 
-                              agegrouping =? character, 
-                              gendervector = c("M", "F"), 
-                              countryparam) {
-  
-  df <- df %>% 
-    filter(agegroup == agegrouping, 
-           gender %in% gendervector,
-           country == countryparam)
-  
-  regline_fitted <- loess(df$deaths ~ df$week)
-  regline_expected <- loess(df$expected_deaths ~ df$week)
-  
-  plot <- df %>% 
-    mutate(min_reg = pmin(regline_fitted$fitted, 
-                          regline_expected$fitted),
-           max_reg = pmax(regline_fitted$fitted, 
-                          regline_expected$fitted)) %>%
-    ggplot() +
-    geom_smooth(aes(x = week, 
-                    y = deaths,
-                    color = agegroup),
-                se = FALSE) +             # Confidence interval
-    geom_smooth(aes(x = week, 
-                    y = expected_deaths, 
-                    color = "Expected Deaths")) +
-    geom_ribbon(aes(week, 
-                    ymin = min_reg, 
-                    ymax = max_reg),
-                fill = "red",
-                alpha = 0.5) +
-    scale_color_viridis(discrete = TRUE) +
-    ylab("Deaths") +
-    xlab ("Weeks") +
-    ggtitle(paste("Expected vs. Actual Deaths in 2020", 
-                  "[", countryparam, "]", 
-                  "[Agegroup: ", agegrouping, "]")) +
-    theme_ipsum(base_family = "Helvetica", 
-                plot_title_size = 12, 
-                base_size = 14,
-                axis_title_size = 12)
-  
-  return (ggplotly(plot)) # ggplotly for interactivity
-}
 
-
-
-
-"Function that finds the number of weeks we have data accounted for in 2020"
 weeksin2020 <- function(df) {
+  #"Function that finds the number of weeks we have data accounted for in 2020"
   return (nrow(df %>% 
                  filter(year == 2020) %>% 
                  select(week) %>% 
@@ -94,9 +41,11 @@ weeksin2020 <- function(df) {
 
 minimalweeks <- 52 # Store the lowest common week for which we have data in the current year (2020)
 
-"Function that aggregates deaths (as mean of years prior to 2020) as expected 
-data, and adds a column for excess deaths to the existing dataframe"
+
 addExpectedDeaths <- function(df) {
+  #'Function that aggregates deaths (as mean of years prior to 2020) as expected 
+  #'data, and adds a column for excess deaths to the existing dataframe
+  #'@param df: input dataframe
   weeks2020 <- weeksin2020(df)
   if (weeks2020 <  minimalweeks) assign("minimalweeks", weeks2020,envir = .GlobalEnv) # Change global variable minimalweeks
   expected_deaths <- df %>% 
@@ -124,12 +73,14 @@ addExpectedDeaths <- function(df) {
 }
 
 
-"Rowbind all datasets to a combined dataset, calling addExpectedDeaths()"
+
 assembleAllData <- function(dfVector = c("data_norway", 
                                          "data_sweden", 
                                          "data_denmark", 
                                          "data_france", 
                                          "data_uk")) {
+  #' Rowbind all datasets to a combined dataset, calling addExpectedDeaths()
+  #' @param dfVector: vector of string names of each country dataframe name
   totaldata <- addExpectedDeaths(eval(as.name(dfVector[1])))
   for (i in 2:length(dfVector)) {
     totaldata <- rbind(totaldata, 
@@ -139,78 +90,6 @@ assembleAllData <- function(dfVector = c("data_norway",
   return (totaldata)
 }
 
-
-
-"Function that takes one data frame, set of agegroups, given genders by 
-default, one country, selfconstructed .pdf path to store the plot and 
-prefered y-axis interval. Much of the same description as for the 
-plotfunction_diff except from the fill-part. At the end it returns an
-interactive plot which is facet wraped given by agegroup."
-plotfunction <- function(df, 
-                         agevector = c("0-64", "65-79", "80-84", "85+"), 
-                         gendervector = c("M", "F"), 
-                         countryparam,
-                         filename,
-                         ymin = NA,
-                         ymax = NA) {
-  
-  plot <- df %>% 
-    filter(agegroup %in% agevector, 
-           gender %in% gendervector,
-           country %in% countryparam) %>%
-    ggplot() +
-    geom_smooth(aes(x = week, 
-                    y = deaths,
-                    color = agegroup),
-                se = FALSE) +
-    geom_smooth(aes(x = week, 
-                    y = expected_deaths, 
-                    color = "Expected Deaths"),
-                fill = "lightblue") +
-    scale_color_viridis(discrete = TRUE) +
-    ylab("Deaths") +
-    xlab ("Weeks") +
-    ggtitle(paste("Expected vs. Actual Deaths in 2020", 
-                  "[", countryparam, "]")) +
-    theme_ipsum(base_family = "Helvetica", 
-                plot_title_size = 12, 
-                base_size = 14,
-                axis_title_size = 12)
-  
-  
-  
-  if (!is.na(ymin) | !is.na(ymax)){
-    plot <- plot + ylim(ymin, ymax)
-  }
-  
-  plot <- plot + 
-    facet_wrap(~agegroup, nrow = 1) # Wraps number of agegroups on a single row 
-  
-  ggsave(paste("../results/", filename, sep = ""))
-  
-  return (ggplotly(plot))           # ggplotly for interactivity
-}
-
-
-
-"Plots all the agegroups in a country in single plots"
-plotter <- function(df, gender = c("M", "F"), country){
-  for (agegroup in levels(df$agegroup)){
-    print(plotfunction_diff(df, 
-                            agevector = agegroup, 
-                            gendervector = gender,  
-                            country = country))
-  }
-}
-
-
-
-"Stores created plots in pdf-file"
-plot_pdf <- function(filename, plot){
-  pdf(paste("../results/",filename, sep=""), onefile = TRUE)
-  plotter(plot)
-  dev.off()
-}
 
 
 
@@ -223,15 +102,19 @@ totaldata <- assembleAllData()
 ##### Test statistics-----------------------------------------------------------
 "Is the difference in deaths and expected deaths statistically significant?"
 
-"Function that conducts a two sided welch t.test to test whether 2020 
-deaths are statistically different than expected deaths. Compares x_mean and 
-y_mean to find out whether deaths are higher or lower. Tags the p.value along 
-with a string indicating whether it is above or below the estimated deaths, and 
-returns them as a list"
+
 
 t_testFunc <- function(df, 
                        agegroupvector = c("0-64", "65-79", "80-84", "85+"), 
                        countryparam =? character ) {
+  #'Function that conducts a two sided welch t.test to test whether 2020 
+  #'deaths are statistically different than expected deaths. Compares x_mean and 
+  #'y_mean to find out whether deaths are higher or lower. Tags the p.value along 
+  #'with a string indicating whether it is above or below the estimated deaths, and 
+  #' returns them as a list"
+  #' @param df: input dataframe
+  #' @param agegroupvector: vector of strings, agegroups to be included
+  #' @param countryparam: string, name of country
   testset <- df %>% 
     filter(country == countryparam,
            agegroup %in% agegroupvector,
@@ -259,10 +142,11 @@ t_testFunc <- function(df,
 
 
 
-"Function that returns a string 
-Calls t_testFunc on a given country, uses totaldata as df as opposed to tabledata.
-Returns a string based on the result from t_test_func."
 tableTests <- function(country) {
+  #'Function that returns a string 
+  #'Calls t_testFunc on a given country, uses totaldata as df as opposed to tabledata.
+  #'@param country: string, name of country
+  #'Returns a string based on the result from t_test_func."
   test <- t_testFunc(totaldata, 
                      agegroupvector = c("0-64", "65-79", "80-84", "85+"), 
                      countryparam = country)
@@ -285,15 +169,19 @@ tableTests <- function(country) {
   return (outputlist)
 }
 
-" Returns the first element of a list generated by tableTests func"
+
 getTableTestFirst <- function(country) {
+  #'Returns the first element of a list generated by tableTests func
+  #'@param country: string, name of country
   return (tableTests(country)[[1]])
 }
 getTableTestFirst <- Vectorize(getTableTestFirst)
 
 
-" Returns the second element of a list generated by tableTests func"
+
 getTableTestPvalue <- function(country) {
+  #'Returns the second element of a list generated by tableTests func
+  #'@param country: string, name of country
   return (round(tableTests(country)[[2]], 4))
 }
 getTableTestPvalue <- Vectorize(getTableTestPvalue)
@@ -335,8 +223,9 @@ shortTable_data <- totaldataFilter  %>%
 
 
 
-"Function that returns shortTableData using the formattable package"
+
 shortTable <- function() {
+  #' "Function that returns shortTableData using the formattable package"
   lightred = "#ff7f7f"
   outputTable <- formattable(shortTable_data, list(
     "Total Excess Deaths"              = color_tile("white", lightred),
@@ -352,9 +241,10 @@ shortTable <- function() {
 
 
 
-"Function that returns a sortable table which contains weekly deaths, expected 
-deaths and excess deaths according to agegroup and gender"
+
 longTable <- function() {
+  #'Function that returns a sortable table which contains weekly deaths, expected 
+  #'deaths and excess deaths according to agegroup and gender
   outputtable <- datatable(totaldata %>%
                              select(-year), 
                            colnames = c("Gender", 

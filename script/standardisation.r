@@ -22,7 +22,7 @@ getStandard <- function() {
 
 getFormat <- function(country) {
   #' Returns the format file of a given country
-  #' @param country : 
+  #' @param country : string, name of country
   #' @returns new dataframe
   path <- paste("../datasett/", country, "/") %>% gsub(" ", "",.)
   formatFiles <- list.files(path = path, 
@@ -37,6 +37,7 @@ getFormat <- function(country) {
 
 formatCorrectness <- function(df) {
   #' Checks correctness of format dataframe (imported as csv file)
+  #' @param df: input dataframe
   #' @returns Error messsage if error found 
   colnames <- colnames(df)
   if (!("Gender" %in% colnames) | !("Agegroups" %in% colnames) | !("AgeStandardGroup" %in% colnames)) {
