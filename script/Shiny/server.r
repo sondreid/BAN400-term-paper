@@ -18,6 +18,7 @@ library(scales)
 library(formattable)  
 library(DT)
 library(magrittr)
+library(formattable)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
