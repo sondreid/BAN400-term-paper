@@ -4,6 +4,8 @@ library(plotly)
 
 load("data/totaldata.Rda")
 load("data/MLModel.Rda")
+load("data/table.Rda")
+
 
 
 data <- totaldata
@@ -156,7 +158,20 @@ ui <- fluidPage(
 
                ),
               )
+             ),
+    
+    #Short tabel 
+    tabPanel(title = "Short Tabel",
+             br(),
+             p("Short tabel", style="text-align:justify;color:white;background-color:#0269A4;padding:15px;border-radius:10px"),
+             br(),
+             
+             sidebarLayout(
+               mainPanel(
+                 shortTable()
+               ),
              )
+    )
              
              
             

@@ -21,6 +21,7 @@ library(magrittr)
 
 load(file = "data/totaldata.Rda")
 load(file = "data/MLModel.Rda")
+
 source("ui.r") # Load UI as per defined in ui.r
 server <- function(input, output) {
   
